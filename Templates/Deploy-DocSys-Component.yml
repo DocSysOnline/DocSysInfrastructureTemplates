@@ -1,0 +1,50 @@
+parameters:
+- name: component
+  values: 
+    - DSO
+    - FDDG
+- name: environment
+  type: string
+- name: serverName
+  type: string
+- name: iisSiteFolderPrefix
+  type: string
+- name: applicationPoolPrefix
+  type: string
+
+jobs:
+- deployment: Deploy${{ parameters.component }}To${{ parameters.environment }}Server
+  displayName: "Deploy ${{ parameters.component }} to ${{ parameters.environment }} server"
+  environment: ${{ parameters.environment }} 
+  variables:
+    applicationPoolName: ${{ parameters.applicationPoolPrefix }}${{ parameters.component }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - download: current
+          artifact: deployPackage
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+          inputs:
+            Machines: ${{ parameters.serverName }}
+            UserName: $(DeployUsername)
+            UserPassword: $(DeployUserPassword)
+            InlineScript: |
+              if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
+        - task: WindowsMachineFileCopy@2
+          displayName: "Deploy ${{ parameters.component }} application files to ${{ parameters.environment }} server"
+          inputs:
+            SourcePath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
+            MachineNames: ${{ parameters.serverName }}
+            AdminUserName: $(DeployUsername)
+            AdminPassword: $(DeployUserPassword)
+            TargetPath: "${{ parameters.iisSiteFolderPrefix }}${{ parameters.component }}"
+            CleanTargetBeforeCopy: true
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+          inputs:
+            Machines: ${{ parameters.serverName }}
+            UserName: $(DeployUsername)
+            UserPassword: $(DeployUserPassword)
+            InlineScript: "Start-WebAppPool $(applicationPoolName)" 
