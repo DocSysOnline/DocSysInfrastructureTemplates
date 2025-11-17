@@ -17,7 +17,7 @@ parameters:
 - name: applicationPoolPrefix
   type: string
 - name: clearTemporaryASPNetFilesCache
-  type: bool
+  type: boolean
   default: false
 
 jobs:
