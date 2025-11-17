@@ -23,7 +23,7 @@ jobs:
   environment: ${{ parameters.environment }} 
   variables:
     componentName: ${{ parameters.component }}${{ parameters.componentSuffix }}
-    applicationPoolName: ${{ parameters.applicationPoolPrefix }}${{ var.componentName }}
+    applicationPoolName: ${{ parameters.applicationPoolPrefix }}$(componentName)
   strategy:
     runOnce:
       deploy:
