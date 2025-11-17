@@ -3,6 +3,8 @@ parameters:
   values: 
     - DSO
     - FDDG
+    - DAM
+    - DSFP
 - name: environment
   type: string
 - name: serverName
@@ -28,7 +30,7 @@ jobs:
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
             Machines: ${{ parameters.serverName }}
-            UserName: $(DeployUsername)
+            UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
@@ -37,7 +39,7 @@ jobs:
           inputs:
             SourcePath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             MachineNames: ${{ parameters.serverName }}
-            AdminUserName: $(DeployUsername)
+            AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}${{ parameters.component }}"
             CleanTargetBeforeCopy: true
@@ -45,6 +47,6 @@ jobs:
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
             Machines: ${{ parameters.serverName }}
-            UserName: $(DeployUsername)
+            UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: "Start-WebAppPool $(applicationPoolName)" 
