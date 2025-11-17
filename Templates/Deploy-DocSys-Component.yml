@@ -5,6 +5,9 @@ parameters:
     - FDDG
     - DAM
     - DSFP
+- name: componentSuffix
+  type: string
+  default: ''
 - name: environment
   type: string
 - name: serverName
@@ -15,11 +18,12 @@ parameters:
   type: string
 
 jobs:
-- deployment: Deploy${{ parameters.component }}To${{ parameters.environment }}Server
-  displayName: "Deploy ${{ parameters.component }} to ${{ parameters.environment }} server"
+- deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
+  displayName: "Deploy ${{ parameters.component }}${{ parameters.componentSuffix }} to ${{ parameters.environment }} server"
   environment: ${{ parameters.environment }} 
   variables:
-    applicationPoolName: ${{ parameters.applicationPoolPrefix }}${{ parameters.component }}
+    componentName: ${{ parameters.component }}${{ parameters.componentSuffix }}
+    applicationPoolName: ${{ parameters.applicationPoolPrefix }}${{ var.componentName }}
   strategy:
     runOnce:
       deploy:
@@ -35,13 +39,13 @@ jobs:
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
         - task: WindowsMachineFileCopy@2
-          displayName: "Deploy ${{ parameters.component }} application files to ${{ parameters.environment }} server"
+          displayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
           inputs:
             SourcePath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             MachineNames: ${{ parameters.serverName }}
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
-            TargetPath: "${{ parameters.iisSiteFolderPrefix }}${{ parameters.component }}"
+            TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
