@@ -4,7 +4,7 @@ parameters:
     - DSO
     - FDDG
     - DAM
-    - DSFP
+    - DSFO
 - name: componentSuffix
   type: string
   default: ''
