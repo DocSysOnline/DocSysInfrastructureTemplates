@@ -33,6 +33,14 @@ jobs:
         steps:
         - download: current
           artifact: deployPackage
+        - task: WindowsMachineFileCopy@2
+          displayName: "Copy config to deploy package"
+          inputs:
+            SourcePath: "${{ parameters.iisSiteFolderPrefix }}Config"
+            MachineNames: ${{ parameters.serverName }}
+            AdminUserName: $(DeployUserName)
+            AdminPassword: $(DeployUserPassword)
+            TargetPath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
