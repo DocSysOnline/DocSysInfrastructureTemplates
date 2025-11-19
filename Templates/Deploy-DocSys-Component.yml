@@ -12,6 +12,8 @@ parameters:
   type: string
 - name: serverName
   type: string
+- name: iisSiteName
+  type: string
 - name: iisSiteFolderPrefix
   type: string
 - name: applicationPoolPrefix
@@ -65,7 +67,10 @@ jobs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
-            InlineScript: Write-Output 'Clear cache'
+            ScriptType: FilePath
+            ScriptPath: ./ClearTemporaryASPNetFilesForIISSite.ps1
+            ScriptArguments:
+              iisSiteName: UWV
         - task: PowerShellOnTargetMachines@3
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
