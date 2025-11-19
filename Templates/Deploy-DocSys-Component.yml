@@ -39,6 +39,7 @@ jobs:
           inputs:
             targetType: 'inline'
             script: |
+              ls
               ls $(Pipeline.Workspace)
               ls $(Agent.BuildDirectory)
               ls $(Agent.WorkFolder)
