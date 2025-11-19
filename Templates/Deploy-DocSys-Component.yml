@@ -35,6 +35,8 @@ jobs:
         steps:
         - download: current
           artifact: deployPackage
+        - download: current
+          artifact: scripts
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
