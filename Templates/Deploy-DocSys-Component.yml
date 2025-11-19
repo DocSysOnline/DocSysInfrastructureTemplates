@@ -39,11 +39,6 @@ jobs:
         - download: current
           displayName: 'Download scripts'
           artifact: scripts
-        - task: PowerShell@2
-          inputs:
-            targetType: 'inline'
-            script: |
-              ls $(Pipeline.Workspace)/scripts
         - task: WindowsMachineFileCopy@2
           displayName: "Deploy scripts to ${{ parameters.environment }} server"
           inputs:
@@ -51,7 +46,7 @@ jobs:
             MachineNames: ${{ parameters.serverName }}
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
-            TargetPath: "${{ parameters.iisSiteFolderPrefix }}/Scripts"
+            TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
             CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
