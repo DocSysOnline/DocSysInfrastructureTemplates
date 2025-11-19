@@ -40,6 +40,11 @@ jobs:
             targetType: 'inline'
             script: |
               ls $(Pipeline.Workspace)
+              ls $(Agent.BuildDirectory)
+              ls $(Agent.WorkFolder)
+              ls $(Build.ArtifactStagingDirectory)
+              ls $(Build.Repository.LocalPath)
+              
         # - task: WindowsMachineFileCopy@2
         #   displayName: "Deploy infrastructure scripts to ${{ parameters.environment }} server"
         #   inputs:
