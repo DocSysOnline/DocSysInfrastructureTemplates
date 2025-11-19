@@ -35,6 +35,20 @@ jobs:
         steps:
         - download: current
           artifact: deployPackage
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              ls $(Pipeline.Workspace)
+        # - task: WindowsMachineFileCopy@2
+        #   displayName: "Deploy infrastructure scripts to ${{ parameters.environment }} server"
+        #   inputs:
+        #     SourcePath: "$(Pipeline.Workspace)/"
+        #     MachineNames: ${{ parameters.serverName }}
+        #     AdminUserName: $(DeployUserName)
+        #     AdminPassword: $(DeployUserPassword)
+        #     TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
+        #     CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
@@ -60,16 +74,16 @@ jobs:
             UserPassword: $(DeployUserPassword)
             InlineScript: |
               Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse 
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-          condition: ${{ parameters.clearTemporaryASPNetFilesCache }}
-          inputs:
-            Machines: ${{ parameters.serverName }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
-            ScriptType: FilePath
-            ScriptPath: ./ClearTemporaryASPNetFilesForIISSite.ps1
-            ScriptArguments: '-iisSiteName UWV'
+        # - task: PowerShellOnTargetMachines@3
+        #   displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+        #   condition: ${{ parameters.clearTemporaryASPNetFilesCache }}
+        #   inputs:
+        #     Machines: ${{ parameters.serverName }}
+        #     UserName: $(DeployUserName)
+        #     UserPassword: $(DeployUserPassword)
+        #     ScriptType: FilePath
+        #     ScriptPath: ./ClearTemporaryASPNetFilesForIISSite.ps1
+        #     ScriptArguments: '-iisSiteName UWV'
         - task: PowerShellOnTargetMachines@3
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
