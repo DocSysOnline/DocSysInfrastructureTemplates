@@ -34,19 +34,16 @@ jobs:
       deploy:
         steps:
         - download: current
+          displayName: 'Download deploy package'
           artifact: deployPackage
         - download: current
+          displayName: 'Download scripts'
           artifact: scripts
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
             script: |
-              ls
-              ls $(Pipeline.Workspace)
-              ls $(Agent.BuildDirectory)
-              ls $(Agent.WorkFolder)
-              ls $(Build.ArtifactStagingDirectory)
-              ls $(Build.Repository.LocalPath)
+              ls $(Pipeline.Workspace)/scripts
               
         # - task: WindowsMachineFileCopy@2
         #   displayName: "Deploy infrastructure scripts to ${{ parameters.environment }} server"
