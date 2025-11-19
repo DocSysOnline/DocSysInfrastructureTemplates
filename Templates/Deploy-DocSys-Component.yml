@@ -33,14 +33,6 @@ jobs:
         steps:
         - download: current
           artifact: deployPackage
-        - task: WindowsMachineFileCopy@2
-          displayName: "Copy config to deploy package"
-          inputs:
-            SourcePath: "${{ parameters.iisSiteFolderPrefix }}Config"
-            MachineNames: ${{ parameters.serverName }}
-            AdminUserName: $(DeployUserName)
-            AdminPassword: $(DeployUserPassword)
-            TargetPath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
@@ -58,6 +50,14 @@ jobs:
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Copy config"
+          inputs:
+            Machines: ${{ parameters.serverName }}
+            UserName: $(DeployUserName)
+            UserPassword: $(DeployUserPassword)
+            InlineScript: |
+              Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse 
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
           condition: ${{ parameters.clearTemporaryASPNetFilesCache }}
