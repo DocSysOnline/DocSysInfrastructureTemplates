@@ -68,7 +68,7 @@ jobs:
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
           inputs:
             targetType: filePath
-            filePath: ${{ variables.Pipeline.Workspace}}\scripts\ConfigureConfigurationFilesWithMustache.ps1
+            filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             # ScriptArguments: "-mustacheConfigurationFilePath ${{ parameters.mustacheConfigurationFilePath }}"
         # - task: PowerShellOnTargetMachines@3
         #   displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
