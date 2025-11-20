@@ -71,6 +71,7 @@ jobs:
           inputs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
+            workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             arguments: "-mustacheConfigurationFilePath ${{ parameters.mustacheConfigurationFilePath }}"
         - task: PowerShell@2
           inputs:
