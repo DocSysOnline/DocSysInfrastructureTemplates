@@ -18,6 +18,10 @@ parameters:
   type: string
 - name: applicationPoolPrefix
   type: string
+  # temporary parameter obsolete when all components use mustache for config
+- name: useMustacheForConfig
+  type: boolean
+  default: false
 - name: clearTemporaryASPNetFilesCache
   type: boolean
   default: false
@@ -66,6 +70,7 @@ jobs:
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
+          condition: ${{ eq(parameters.useMustacheForConfig, false) }}
           displayName: "Copy config"
           inputs:
             Machines: ${{ parameters.serverName }}
