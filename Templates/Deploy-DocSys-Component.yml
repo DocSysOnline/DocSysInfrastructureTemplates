@@ -22,6 +22,10 @@ parameters:
 - name: useMustacheForConfig
   type: boolean
   default: false
+  # make required when every component uses mustache
+- name: mustacheConfigurationFilePath
+  type: string
+  default: ''
 - name: clearTemporaryASPNetFilesCache
   type: boolean
   default: false
@@ -56,9 +60,9 @@ jobs:
           displayName: "Configure configuration files with Mustache"
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
           inputs:
-            targetType: 'inline'
-            script: |
-              Write-Output "Configure Mustache"
+            ScriptType: FilePath
+            ScriptPath: $(Pipeline.Workspace)/scripts/ConfigureConfigurationFilesWithMustache.ps1
+            ScriptArguments: '-mustacheConfigurationFilePath ${{ parameters.mustacheConfigurationFilePath }}'
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
