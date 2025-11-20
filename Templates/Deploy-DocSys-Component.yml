@@ -85,7 +85,7 @@ jobs:
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
-            CleanTargetBeforeCopy: true
+            # CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
           condition: ${{ eq(parameters.useMustacheForConfig, false) }}
           displayName: "Copy config"
