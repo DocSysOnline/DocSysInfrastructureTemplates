@@ -55,7 +55,7 @@ jobs:
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
-            CleanTargetBeforeCopy: true
+            # CleanTargetBeforeCopy: true
         - task: PowerShell@2
           displayName: "Configure configuration files with Mustache"
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
