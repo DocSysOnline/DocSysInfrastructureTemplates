@@ -3,6 +3,7 @@ param ($mustacheConfigurationFilePath)
 # Install-PSResource -Name PSMustache
 Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
 Install-Module -Name PSMustache -Scope CurrentUser -Force
+Write-Host "test"
 if (Test-Path -Path $mustacheConfigurationFilePath) {
     Write-Host "Configuration file found."
     $values = Get-Content $mustacheConfigurationFilePath | ConvertFrom-Json
