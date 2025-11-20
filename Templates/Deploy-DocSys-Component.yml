@@ -41,9 +41,9 @@ jobs:
     runOnce:
       deploy:
         steps:
-        - download: current
-          displayName: 'Download deploy package'
-          artifact: deployPackage
+        # - download: current
+        #   displayName: 'Download deploy package'
+        #   artifact: deployPackage
         - download: current
           displayName: 'Download scripts'
           artifact: scripts
