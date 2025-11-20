@@ -55,14 +55,16 @@ jobs:
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
-            # CleanTargetBeforeCopy: true
+            CleanTargetBeforeCopy: true
         - task: PowerShell@2
           inputs:
             targetType: inline
+            workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             script: |
               Write-Output $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
               Test-Path -Path $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
               ls $(Pipeline.Workspace)\scripts
+              ls "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
         - task: PowerShell@2
           displayName: "Configure configuration files with Mustache"
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
@@ -70,6 +72,11 @@ jobs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             arguments: "-mustacheConfigurationFilePath ${{ parameters.mustacheConfigurationFilePath }}"
+        - task: PowerShell@2
+          inputs:
+            targetType: inline
+            script: |
+              ls "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
@@ -86,7 +93,7 @@ jobs:
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
-            # CleanTargetBeforeCopy: true
+            CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
           condition: ${{ eq(parameters.useMustacheForConfig, false) }}
           displayName: "Copy config"
