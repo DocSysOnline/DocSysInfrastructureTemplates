@@ -1,6 +1,6 @@
 param ($mustacheConfigurationFilePath)
 Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
-Install-Module -Name PSMustache -Scope CurrentUser -Force
+# Install-Module -Name PSMustache -Scope CurrentUser -Force
 Write-Host "test"
 Write-Host $mustacheConfigurationFilePath
 if (Test-Path -Path $mustacheConfigurationFilePath) {
