@@ -61,6 +61,8 @@ jobs:
             targetType: inline
             script: |
               ls "$(Build.SourcesDirectory)"
+              ls "$(Build.SourcesDirectory)\Clients"
+              ls "$(Build.SourcesDirectory)\Clients\UWV"
               $test = '$(Build.SourcesDirectory)\${{ parameters.mustacheConfigurationFilePath }}'
               Write-Output $test
               Test-Path -Path $test
