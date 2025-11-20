@@ -52,6 +52,13 @@ jobs:
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
             CleanTargetBeforeCopy: true
+        - task: PowerShell@2
+          displayName: "Configure configuration files with Mustache"
+          condition: ${{ eq(parameters.useMustacheForConfig, true) }}
+          inputs:
+            targetType: 'inline'
+            script: |
+              Write-Output "Configure Mustache"
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
