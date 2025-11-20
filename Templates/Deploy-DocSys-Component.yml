@@ -61,7 +61,7 @@ jobs:
             targetType: inline
             script: |
               ls "$(Build.SourcesDirectory)"
-              $test = $(Build.SourcesDirectory)\${{ parameters.mustacheConfigurationFilePath }}
+              $test = '$(Build.SourcesDirectory)\${{ parameters.mustacheConfigurationFilePath }}'
               Write-Output $test
               Test-Path -Path $test
         - task: PowerShell@2
