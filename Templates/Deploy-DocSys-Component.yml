@@ -58,7 +58,7 @@ jobs:
         #     # CleanTargetBeforeCopy: true
         - task: PowerShell@2
           inputs:
-            targetType: 'inline'
+            targetType: inline
             script: |
               Write-Output $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
               Test-Path -Path $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
@@ -67,8 +67,8 @@ jobs:
           displayName: "Configure configuration files with Mustache"
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
           inputs:
-            ScriptType: FilePath
-            ScriptPath: ${{ variables.Pipeline.Workspace}}\scripts\ConfigureConfigurationFilesWithMustache.ps1
+            targetType: filePath
+            filePath: ${{ variables.Pipeline.Workspace}}\scripts\ConfigureConfigurationFilesWithMustache.ps1
             # ScriptArguments: "-mustacheConfigurationFilePath ${{ parameters.mustacheConfigurationFilePath }}"
         # - task: PowerShellOnTargetMachines@3
         #   displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
