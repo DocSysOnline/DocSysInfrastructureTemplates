@@ -1,4 +1,5 @@
 param ($mustacheConfigurationFilePath)
+Write-Host "Test"
 Import-Module $PSScriptRoot\Libraries\PSMustache-1.3.2\PSMustache.psd1
 if (Test-Path -Path $mustacheConfigurationFilePath) {
     Write-Host "Configuration file found."
