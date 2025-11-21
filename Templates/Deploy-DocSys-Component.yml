@@ -63,10 +63,8 @@ jobs:
           inputs:
             targetType: inline
             script: |
-              ls "$(Build.SourcesDirectory)"
-              ls "$(Build.SourcesDirectory)\Clients"
-              ls "$(Build.SourcesDirectory)\Clients\UWV"
-              $test = '$(Pipeline.Workspace)\${{ parameters.mustacheConfigurationFilePath }}'
+              ls "$(Pipeline.Workspace)"
+              $test = '$(Pipeline.Workspace)\config\${{ parameters.mustacheConfigurationFilePath }}'
               Write-Output $test
               Test-Path -Path $test
         - task: PowerShell@2
