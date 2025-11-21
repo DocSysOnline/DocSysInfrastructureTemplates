@@ -9,7 +9,7 @@ if (Test-Path -Path $mustacheConfigurationFilePath) {
         $configuredFile = $_.Replace('.mustache','') 
         $configuredContent = $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values
         Write-Output $configuredContent
-        $configuredContent | Out-File -FilePath $configuredFile
+        $configuredContent | Out-File -FilePath $configuredFile -Encoding utf8
         Write-Output "Configurationfile $configuredFile created."
     }
 }
