@@ -7,7 +7,9 @@ if (Test-Path -Path $mustacheConfigurationFilePath) {
 
     Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
         $configuredFile = $_.Replace('.mustache','') 
-        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile
+        $configuredContent = $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values
+        Write-Output $configuredContent
+        $configuredContent | Out-File -FilePath $configuredFile
         Write-Output "Configurationfile $configuredFile created."
     }
 }
