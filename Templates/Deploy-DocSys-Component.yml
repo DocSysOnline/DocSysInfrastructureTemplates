@@ -47,6 +47,9 @@ jobs:
         - download: current
           displayName: 'Download scripts'
           artifact: scripts
+        - download: current
+          displayName: 'Download configuration'
+          artifact: config
         - task: WindowsMachineFileCopy@2
           displayName: "Deploy scripts to ${{ parameters.environment }} server"
           inputs:
@@ -63,7 +66,7 @@ jobs:
               ls "$(Build.SourcesDirectory)"
               ls "$(Build.SourcesDirectory)\Clients"
               ls "$(Build.SourcesDirectory)\Clients\UWV"
-              $test = '$(Build.SourcesDirectory)\${{ parameters.mustacheConfigurationFilePath }}'
+              $test = '$(Pipeline.Workspace)${{ parameters.mustacheConfigurationFilePath }}'
               Write-Output $test
               Test-Path -Path $test
         - task: PowerShell@2
@@ -73,7 +76,7 @@ jobs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            arguments: "-mustacheConfigurationFilePath $(Build.SourcesDirectory)${{ parameters.mustacheConfigurationFilePath }}"
+            arguments: "-mustacheConfigurationFilePath $(Pipeline.Workspace)${{ parameters.mustacheConfigurationFilePath }}"
         - task: PowerShell@2
           inputs:
             targetType: inline
