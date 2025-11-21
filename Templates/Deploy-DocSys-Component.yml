@@ -92,7 +92,7 @@ jobs:
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: |
-              Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse 
+              Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
           condition: ${{ parameters.clearTemporaryASPNetFilesCache }}
