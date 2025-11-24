@@ -18,6 +18,14 @@ parameters:
   type: string
 - name: applicationPoolPrefix
   type: string
+  # temporary parameter obsolete when all components use mustache for config
+- name: useMustacheForConfig
+  type: boolean
+  default: false
+  # make required when every component uses mustache
+- name: mustacheConfigurationFilePath
+  type: string
+  default: ''
 - name: clearTemporaryASPNetFilesCache
   type: boolean
   default: false
@@ -39,6 +47,9 @@ jobs:
         - download: current
           displayName: 'Download scripts'
           artifact: scripts
+        - download: current
+          displayName: 'Download configuration'
+          artifact: config
         - task: WindowsMachineFileCopy@2
           displayName: "Deploy scripts to ${{ parameters.environment }} server"
           inputs:
@@ -48,6 +59,14 @@ jobs:
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
             CleanTargetBeforeCopy: true
+        - task: PowerShell@2
+          displayName: "Configure configuration files with Mustache"
+          condition: ${{ eq(parameters.useMustacheForConfig, true) }}
+          inputs:
+            targetType: filePath
+            filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
+            workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
+            arguments: '-mustacheConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.mustacheConfigurationFilePath }}'
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
@@ -66,13 +85,14 @@ jobs:
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
         - task: PowerShellOnTargetMachines@3
+          condition: ${{ eq(parameters.useMustacheForConfig, false) }}
           displayName: "Copy config"
           inputs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: |
-              Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse 
+              Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
           condition: ${{ parameters.clearTemporaryASPNetFilesCache }}
