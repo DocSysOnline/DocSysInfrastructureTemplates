@@ -59,10 +59,7 @@ jobs:
                 Remove-Item -Path $(Pipeline.Workspace)\config -Recurse
               }
               ls $(Pipeline.Workspace)
-              ls $(Pipeline.Workspace)/deployPackage
-              ls $(Pipeline.Workspace)/deployPackage/FDDG
-              ls $(Pipeline.Workspace)/deployPackage/DSO
-              
+             
 
         # - download: current
         #   displayName: 'Download deploy package'
