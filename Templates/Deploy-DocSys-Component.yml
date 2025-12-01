@@ -41,6 +41,24 @@ jobs:
     runOnce:
       deploy:
         steps:
+        - task: PowerShell@2
+          displayName: 'Clear artifact folders'
+          inputs:
+            targetType: 'inline'
+            script: |
+              if(Test-Path -Path $(Pipeline.Workspace)\deployPackage)
+              {
+                Remove-Item -Path $(Pipeline.Workspace)\deployPackage -Recurse
+              }
+              if(Test-Path -Path $(Pipeline.Workspace)\scripts)
+              {
+                Remove-Item -Path $(Pipeline.Workspace)\scripts -Recurse
+              }
+              if(Test-Path -Path $(Pipeline.Workspace)\config)
+              {
+                Remove-Item -Path $(Pipeline.Workspace)\config -Recurse
+              }
+              ls $(Pipeline.Workspace)
         - download: current
           displayName: 'Download deploy package'
           artifact: deployPackage
