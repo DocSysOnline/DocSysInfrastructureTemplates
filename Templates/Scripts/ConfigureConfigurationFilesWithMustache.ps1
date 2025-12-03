@@ -1,13 +1,14 @@
-param ($mustacheConfigurationFilePath)
-# Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+param ($docSysConfigurationFilePath)
 Install-Module -Name PSMustache -Scope CurrentUser -Force
-if (Test-Path -Path $mustacheConfigurationFilePath) {
-    Write-Host "Configuration file found."
-    $values = Get-Content $mustacheConfigurationFilePath | ConvertFrom-Json
+if (Test-Path -Path $docSysConfigurationFilePath -eq false) {
+    Write-Host "DocSys Configuration file not found."
+    Exit
+}
 
-    Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
-        $configuredFile = $_.Replace('.mustache','') 
-        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile -Encoding utf8
-        Write-Output "Configurationfile $configuredFile created."
-    }
+$values = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
+
+Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
+    $configuredFile = $_.Replace('.mustache','') 
+    $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile -Encoding utf8
+    Write-Output "Configurationfile $configuredFile created."
 }
