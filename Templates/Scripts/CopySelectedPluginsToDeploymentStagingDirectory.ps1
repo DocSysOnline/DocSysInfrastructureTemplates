@@ -14,7 +14,7 @@ if ($component -eq "DSO") {
     )
     foreach ($plugin in $plugins) {
         Copy-Item -Path Plugins\$component\$plugin -Destination $component\bin\Plugins
-        Write-Host "Copied plugin $(plugin) to component $(component)"
+        Write-Host "Copied plugin $($plugin) to component $($component)"
     }
 
     ls DSO\bin
