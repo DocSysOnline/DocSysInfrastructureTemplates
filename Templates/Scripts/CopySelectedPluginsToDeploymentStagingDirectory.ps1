@@ -1,5 +1,5 @@
 param ($docSysConfigurationFilePath, $component)
-if (Test-Path -Path $docSysConfigurationFilePath | -eq $False) {
+if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Write-Host "DocSys Configuration file not found."
     Exit
 }
