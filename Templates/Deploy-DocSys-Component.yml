@@ -23,7 +23,7 @@ parameters:
   type: boolean
   default: false
   # make required when every component uses mustache
-- name: mustacheConfigurationFilePath
+- name: docSysConfigurationFilePath
   type: string
   default: ''
 
@@ -81,14 +81,14 @@ jobs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.mustacheConfigurationFilePath }}'
+            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }}'
         - task: PowerShell@2
           displayName: "Copy selected plugin files to deployment staging directory"
           inputs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\CopySelectedPluginsToDeploymentStagingDirectory.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage"
-            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.mustacheConfigurationFilePath }} -component ${{ parameters.component }}'
+            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -component ${{ parameters.component }}'
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
