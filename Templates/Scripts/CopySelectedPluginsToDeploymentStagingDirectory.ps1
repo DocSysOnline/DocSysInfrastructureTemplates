@@ -8,8 +8,13 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
 # $pluginList = $configuration.DSO.Plugins;
 # Write-Host $pluginList
 
-$pluginList2 = $configuration | Get-Member -Name $component | Get-Member -Name "Plugins" 
-Write-Host $pluginList2
+$componentConfig = $configuration | Get-Member -Name $component
+if($null -ne $componentConfig)
+{
+    $pluginList = $componentConfig | Get-Member -Name "Plugins" 
+}
+
+Write-Host $pluginList
 
 # if ($component -eq "DSO") {
 #     $plugins = @(
