@@ -26,9 +26,6 @@ parameters:
 - name: mustacheConfigurationFilePath
   type: string
   default: ''
-- name: clearTemporaryASPNetFilesCache
-  type: boolean
-  default: false
 
 jobs:
 - deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
@@ -120,7 +117,6 @@ jobs:
               Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-          condition: ${{ parameters.clearTemporaryASPNetFilesCache }}
           inputs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
