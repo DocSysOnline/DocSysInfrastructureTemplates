@@ -5,27 +5,12 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
 }
 
 $configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
-$componentConfig = $configuration | Get-Member -Name $component
-Write-Host $componentConfig
-if($null -ne $componentConfig)
+$plugins = $configuration."$component".Plugins
+if($null -ne $plugins)
 {
-    $pluginList = $componentConfig | Get-Member -Name "Plugins" 
+    New-Item "$component\bin\Plugins" -ItemType Directory
+    foreach ($plugin in $plugins) {
+        Copy-Item -Path "Plugins\$component\$plugin" -Destination "$component\bin\Plugins"
+        Write-Host "Copied plugin $plugin to component $component"
+    }
 }
-
-Write-Host $pluginList
-
-# if ($component -eq "DSO") {
-#     $plugins = @(
-#       "DocSysOnline.Plugins.ApiDefinition.dll",
-#       "DocSysOnline.Plugins.DownloadPlugin.dll",
-#       "DocSysOnline.Plugins.Flow.dll",
-#       "DocSysOnline.Plugins.MomPlugin.dll",
-#       "DocSysOnline.Plugins.StubsPlugin.dll"
-#     )
-
-#     New-Item "$component\bin\Plugins" -ItemType Directory
-#     foreach ($plugin in $plugins) {
-#         Copy-Item -Path "Plugins\$component\$plugin" -Destination "$component\bin\Plugins"
-#         Write-Host "Copied plugin $plugin to component $component"
-#     }
-# }
