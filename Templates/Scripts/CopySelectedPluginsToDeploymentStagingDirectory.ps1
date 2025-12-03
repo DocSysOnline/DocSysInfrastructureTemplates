@@ -13,11 +13,11 @@ if ($component -eq "DSO") {
       "DocSysOnline.Plugins.StubsPlugin.dll"
     )
     New-Item "$component\bin\Plugins" -ItemType Directory
-    # foreach ($plugin in $plugins) {
-    #     Copy-Item -Path Plugins\$component\$plugin -Destination $component\bin\Plugins\*
-    #     Write-Host "Copied plugin $($plugin) to component $($component)"
-    # }
+    ls DSO\bin\Plugins\*
+    foreach ($plugin in $plugins) {
+        Copy-Item -Path Plugins\$component\$plugin -Destination $component\bin\Plugins\*
+        Write-Host "Copied plugin $($plugin) to component $($component)"
+    }
 
-    ls DSO\bin
-    # ls DSO\bin\Plugins\*
+    ls DSO\bin\Plugins\*
 }
