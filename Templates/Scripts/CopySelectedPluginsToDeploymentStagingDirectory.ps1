@@ -4,25 +4,25 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Exit
 }
 
-$configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
-$pluginList = $configuration.DSO.Plugins;
-Write-Host $pluginList
+# $configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
+# $pluginList = $configuration.DSO.Plugins;
+# Write-Host $pluginList
 
-$pluginList2 = $configuration | Get-Member -Name $component
+$pluginList2 = $configuration | Get-Member -Name $component | Get-Member -Name "Plugins" 
 Write-Host $pluginList2
 
-if ($component -eq "DSO") {
-    $plugins = @(
-      "DocSysOnline.Plugins.ApiDefinition.dll",
-      "DocSysOnline.Plugins.DownloadPlugin.dll",
-      "DocSysOnline.Plugins.Flow.dll",
-      "DocSysOnline.Plugins.MomPlugin.dll",
-      "DocSysOnline.Plugins.StubsPlugin.dll"
-    )
+# if ($component -eq "DSO") {
+#     $plugins = @(
+#       "DocSysOnline.Plugins.ApiDefinition.dll",
+#       "DocSysOnline.Plugins.DownloadPlugin.dll",
+#       "DocSysOnline.Plugins.Flow.dll",
+#       "DocSysOnline.Plugins.MomPlugin.dll",
+#       "DocSysOnline.Plugins.StubsPlugin.dll"
+#     )
 
-    New-Item "$component\bin\Plugins" -ItemType Directory
-    foreach ($plugin in $plugins) {
-        Copy-Item -Path "Plugins\$component\$plugin" -Destination "$component\bin\Plugins"
-        Write-Host "Copied plugin $plugin to component $component"
-    }
-}
+#     New-Item "$component\bin\Plugins" -ItemType Directory
+#     foreach ($plugin in $plugins) {
+#         Copy-Item -Path "Plugins\$component\$plugin" -Destination "$component\bin\Plugins"
+#         Write-Host "Copied plugin $plugin to component $component"
+#     }
+# }
