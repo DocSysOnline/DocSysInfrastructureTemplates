@@ -4,10 +4,7 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Exit
 }
 
-# $configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
-# $pluginList = $configuration.DSO.Plugins;
-# Write-Host $pluginList
-
+$configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
 $componentConfig = $configuration | Get-Member -Name $component
 if($null -ne $componentConfig)
 {
