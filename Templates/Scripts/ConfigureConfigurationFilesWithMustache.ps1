@@ -1,7 +1,7 @@
 param ($docSysConfigurationFilePath)
 Install-Module -Name PSMustache -Scope CurrentUser -Force
 if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
-    Write-Host "DocSys Configuration file not found."
+    Write-Host -ForegroundColor Red "DocSys Configuration file not found."
     Exit
 }
 
