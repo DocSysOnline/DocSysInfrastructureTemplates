@@ -15,7 +15,7 @@ if ($component -eq "DSO") {
     New-Item "$component\bin\Plugins" -ItemType Directory
     ls DSO\bin\Plugins\*
     foreach ($plugin in $plugins) {
-        Copy-Item -Path Plugins\$component\$plugin -Destination $component\bin\Plugins\*
+        Copy-Item -Path "Plugins\$component\$plugin" -Destination "$component\bin\Plugins"
         Write-Host "Copied plugin $($plugin) to component $($component)"
     }
 
