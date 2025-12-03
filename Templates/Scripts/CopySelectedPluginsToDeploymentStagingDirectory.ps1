@@ -6,6 +6,7 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
 
 $configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
 $componentConfig = $configuration | Get-Member -Name $component
+Write-Host $componentConfig
 if($null -ne $componentConfig)
 {
     $pluginList = $componentConfig | Get-Member -Name "Plugins" 
