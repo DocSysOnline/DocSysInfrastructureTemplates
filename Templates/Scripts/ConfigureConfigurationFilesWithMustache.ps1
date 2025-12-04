@@ -1,5 +1,7 @@
-param ($docSysConfigurationFilePath)
+param ($docSysConfigurationFilePath,
+    $dsoDatabaseConnection)
 Install-Module -Name PSMustache -Scope CurrentUser -Force
+Write-Host "Connection $dsoDatabaseConnection"
 if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Write-Host -ForegroundColor Red "DocSys Configuration file not found."
     Exit
