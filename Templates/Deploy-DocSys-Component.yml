@@ -18,6 +18,8 @@ parameters:
   type: string
 - name: applicationPoolPrefix
   type: string
+- name: secretsConfig
+  type: string
   # temporary parameter obsolete when all components use mustache for config
 - name: useMustacheForConfig
   type: boolean
@@ -65,7 +67,7 @@ jobs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -dsoDatabaseConnection "$(DSO.DatabaseConnectionString)"'
+            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} ${{ parameters.secretsConfig }}'
         - task: PowerShell@2
           displayName: "Copy selected plugin files to deployment staging directory"
           inputs:
