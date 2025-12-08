@@ -9,11 +9,15 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
 $values = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
 $secrets = $args
 foreach ($secret in $secrets) {
+    $splitSecret = $secret -split '='
+    $secretValue = $splitSecret[1]
+
+    $values.DSO.DatabaseConnectionString = $secretValue
     Write-Output $secret
 }
 
 Write-Output "Combined configuration input"
-Write-Output $values
+Write-Host ($values | ConvertTo-JSON)
 
 Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
     $configuredFile = $_.Replace('.mustache','') 
