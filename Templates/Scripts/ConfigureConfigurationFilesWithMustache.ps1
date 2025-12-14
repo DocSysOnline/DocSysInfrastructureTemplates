@@ -14,20 +14,23 @@ function Format-ConfigurationFiles {
 
     foreach ($secret in $secrets.GetEnumerator()) {
         $splitSecret = $secret -split '='
-        Add-DottedPath -Root $values -Path $splitSecret[0] -Value $splitSecret[1]
+        Add-SecretsToDottedPath -Root $values -Path $splitSecret[0] -Value $splitSecret[1]
     }
 
     Write-Output "Combined configuration input"
     Write-Host ($values | ConvertTo-JSON -Depth 100)
 
-    # Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
-    #     $configuredFile = $_.Replace('.mustache','') 
-    #     $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile -Encoding utf8
-    #     Write-Output "Configurationfile $configuredFile created."
-    # }
+    Write-Output
+    Write-Output "Starting configuration file generation"
+
+    Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
+        $configuredFile = $_.Replace('.mustache','') 
+        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile -Encoding utf8
+        Write-Output "Configurationfile $configuredFile created."
+    }
 }
 
-function Add-DottedPath {
+function Add-SecretsToDottedPath {
     param (
         [hashtable]$Root,
         [string]$Path,
