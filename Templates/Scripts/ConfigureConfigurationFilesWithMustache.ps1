@@ -9,7 +9,7 @@ function Format-ConfigurationFiles {
         Exit
     }
 
-    $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
+    $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
     $secrets = $args
 
     foreach ($secret in $secrets.GetEnumerator()) {
