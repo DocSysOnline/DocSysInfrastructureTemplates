@@ -65,6 +65,7 @@ jobs:
           displayName: "Configure configuration files with Mustache in deployment staging directory"
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
           inputs:
+            pwsh: true
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
@@ -72,6 +73,7 @@ jobs:
         - task: PowerShell@2
           displayName: "Copy selected plugin files to deployment staging directory"
           inputs:
+            pwsh: true
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\CopySelectedPluginsToDeploymentStagingDirectory.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage"
