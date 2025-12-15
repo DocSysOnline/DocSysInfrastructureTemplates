@@ -4,12 +4,14 @@ Install-Module -Name PSMustache -Scope CurrentUser -Force
 function Format-ConfigurationFiles {
     param ($docSysConfigurationFilePath)
 
+    $PSVersionTable
+    
     if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
         Write-Output -ForegroundColor Red "DocSys Configuration file not found."
         Exit
     }
-
-    $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
+    
+    $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
     $secrets = $args
 
     foreach ($secret in $secrets.GetEnumerator()) {
