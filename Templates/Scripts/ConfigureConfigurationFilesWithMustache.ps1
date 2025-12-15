@@ -20,7 +20,7 @@ function Format-ConfigurationFiles {
     Write-Output "Combined configuration input"
     Write-Host ($values | ConvertTo-JSON -Depth 100)
 
-    Write-Output
+    Write-Output ""
     Write-Output "Starting configuration file generation"
 
     Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
