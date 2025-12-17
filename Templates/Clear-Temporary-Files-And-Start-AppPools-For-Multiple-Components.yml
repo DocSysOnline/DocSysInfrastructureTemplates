@@ -23,15 +23,15 @@ jobs:
         - download: current
           displayName: 'Download scripts'
           artifact: scripts
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-          inputs:
-            Machines: ${{ parameters.serverName }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
-            ScriptType: FilePath
-            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
-            ScriptArguments: '-iisSiteName UWV'
+        # - task: PowerShellOnTargetMachines@3
+        #   displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+        #   inputs:
+        #     Machines: ${{ parameters.serverName }}
+        #     UserName: $(DeployUserName)
+        #     UserPassword: $(DeployUserPassword)
+        #     ScriptType: FilePath
+        #     ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
+        #     ScriptArguments: '-iisSiteName UWV'
         - task: PowerShellOnTargetMachines@3
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
