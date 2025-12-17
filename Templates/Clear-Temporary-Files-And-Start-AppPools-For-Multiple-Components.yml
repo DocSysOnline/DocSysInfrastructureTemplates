@@ -47,4 +47,4 @@ jobs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
-            InlineScript: "Start-WebAppPool $(applicationPoolName)" 
+            InlineScript: "foreach($applicationPool in $(applicationPools)) { Start-WebAppPool $applicationPool}" 
