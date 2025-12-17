@@ -4,9 +4,11 @@ parameters:
 - name: serverName
   type: string
 - name: iisSiteNames
-  type: stringList
+  type: object
+  default: []
 - name: applicationPools
-  type: stringList
+  type: object
+  default: []
 
 jobs:
 - deployment: ClearTemporaryFilesAndStartAppPoolsForMultipleComponents
