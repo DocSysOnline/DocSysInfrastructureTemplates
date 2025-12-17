@@ -21,6 +21,9 @@ parameters:
 - name: secrets
   type: string
   default: ''
+- name: clearTemporaryFilesPerComponent
+  type: string
+  default: true
   # temporary parameter obsolete when all components use mustache for config
 - name: useMustacheForConfig
   type: boolean
@@ -106,6 +109,7 @@ jobs:
               Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+          condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
           inputs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
@@ -115,6 +119,7 @@ jobs:
             ScriptArguments: '-iisSiteName UWV'
         - task: PowerShellOnTargetMachines@3
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+          condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
           inputs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
