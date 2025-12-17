@@ -1,0 +1,39 @@
+parameters:
+- name: environment
+  type: string
+- name: serverName
+  type: string
+- name: iisSiteNames
+  type: stringList
+- name: applicationPools
+  type: stringList
+
+jobs:
+- deployment: ClearTemporaryFilesAndStartAppPoolsForMultipleComponents
+  displayName: "Clear temporary files and start apppools for multiple Components"
+  workspace:
+    clean: all
+  environment: ${{ parameters.environment }} 
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - download: current
+          displayName: 'Download scripts'
+          artifact: scripts
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+          inputs:
+            Machines: ${{ parameters.serverName }}
+            UserName: $(DeployUserName)
+            UserPassword: $(DeployUserPassword)
+            ScriptType: FilePath
+            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
+            ScriptArguments: '-iisSiteName UWV'
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+          inputs:
+            Machines: ${{ parameters.serverName }}
+            UserName: $(DeployUserName)
+            UserPassword: $(DeployUserPassword)
+            InlineScript: "Start-WebAppPool $(applicationPoolName)" 
