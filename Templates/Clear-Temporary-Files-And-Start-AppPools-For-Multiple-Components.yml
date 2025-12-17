@@ -3,6 +3,9 @@ parameters:
   type: string
 - name: serverName
   type: string
+- name: components
+  type: object
+  default: []
 - name: iisSiteNames
   type: object
   default: []
