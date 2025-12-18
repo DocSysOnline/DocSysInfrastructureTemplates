@@ -97,6 +97,13 @@ jobs:
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
+        - task: PowerShell@2
+          displayName: "Clear files with potential secrets from agent"
+          inputs:
+            pwsh: true
+            targetType: inline
+            workingDirectory: "$(Pipeline.Workspace)"
+            script: "Remove-Item deployPackage -Recurse"
         - task: PowerShellOnTargetMachines@3
           condition: ${{ eq(parameters.useMustacheForConfig, false) }}
           displayName: "Copy config"

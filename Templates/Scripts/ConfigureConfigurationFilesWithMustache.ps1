@@ -4,8 +4,6 @@ Install-Module -Name PSMustache -Scope CurrentUser -Force
 function Format-ConfigurationFiles {
     param ($docSysConfigurationFilePath)
 
-    $PSVersionTable
-    
     if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
         Write-Output -ForegroundColor Red "DocSys Configuration file not found."
         Exit
