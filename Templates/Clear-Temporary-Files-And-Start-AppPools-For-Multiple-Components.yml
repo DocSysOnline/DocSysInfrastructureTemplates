@@ -1,0 +1,52 @@
+parameters:
+- name: environment
+  type: string
+- name: serverName
+  type: string
+- name: components
+  type: object
+  default: []
+- name: iisSiteFolderPrefix
+  type: string
+- name: iisSiteName
+  type: string
+- name: applicationPools
+  type: object
+  default: []
+- name: dependsOnList
+  type: object
+  default: []
+
+jobs:
+- deployment: ClearTemporaryFilesAndStartAppPoolsForMultipleComponents
+  displayName: "Clear temporary files and start apppools for multiple Components"
+  dependsOn: 
+  - ${{ each dependsOn in parameters.dependsOnList }}:
+    - ${{ dependsOn }}
+  workspace:
+    clean: all
+  environment: ${{ parameters.environment }} 
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - download: current
+          displayName: 'Download scripts'
+          artifact: scripts
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+          inputs:
+            Machines: ${{ parameters.serverName }}
+            UserName: $(DeployUserName)
+            UserPassword: $(DeployUserPassword)
+            ScriptType: FilePath
+            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
+            ScriptArguments: '-iisSiteName ${{ parameters.iisSiteFolderPrefix }}'
+        - ${{ each applicationPool in parameters.applicationPools }}:            
+          - task: PowerShellOnTargetMachines@3
+            displayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"
+            inputs:
+              Machines: ${{ parameters.serverName }}
+              UserName: $(DeployUserName)
+              UserPassword: $(DeployUserPassword)
+              InlineScript: "Start-WebAppPool ${{ applicationPool }}"

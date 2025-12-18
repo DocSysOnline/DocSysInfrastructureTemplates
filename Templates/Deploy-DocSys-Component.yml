@@ -14,18 +14,20 @@ parameters:
   type: string
 - name: iisSiteName
   type: string
+  default: ''
 - name: iisSiteFolderPrefix
   type: string
 - name: applicationPoolPrefix
   type: string
+- name: clearTemporaryFilesPerComponent
+  type: string
+  default: true
   # temporary parameter obsolete when all components use mustache for config
 - name: useMustacheForConfig
   type: boolean
   default: false
-  # make required when every component uses mustache
 - name: docSysConfigurationFilePath
   type: string
-  default: ''
 
 jobs:
 - deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
@@ -101,6 +103,7 @@ jobs:
               Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+          condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
           inputs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)
@@ -110,6 +113,7 @@ jobs:
             ScriptArguments: '-iisSiteName UWV'
         - task: PowerShellOnTargetMachines@3
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+          condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
           inputs:
             Machines: ${{ parameters.serverName }}
             UserName: $(DeployUserName)

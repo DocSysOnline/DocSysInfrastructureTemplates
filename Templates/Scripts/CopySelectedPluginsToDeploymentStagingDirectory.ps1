@@ -4,7 +4,7 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Exit
 }
 
-$configuration = Get-Content $docSysConfigurationFilePath | ConvertFrom-Json
+$configuration = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
 $plugins = $configuration."$component".Plugins
 if($null -ne $plugins)
 {
