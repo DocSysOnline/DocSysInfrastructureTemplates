@@ -44,10 +44,10 @@ jobs:
             ScriptArguments: '-iisSiteName ${{ parameters.iisSiteFolderPrefix }}'
         - ${{ each applicationPool in parameters.applicationPools }}:            
           - task: PowerShellOnTargetMachines@3
-            displayName: "Start IIS application pool $(applicationPool) on ${{ parameters.environment }} server"
+            displayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"
             inputs:
               Machines: ${{ parameters.serverName }}
               UserName: $(DeployUserName)
               UserPassword: $(DeployUserPassword)
-              InlineScript: "Start-WebAppPool $(applicationPool)"
+              InlineScript: "Start-WebAppPool ${{ applicationPool }}"
               # InlineScript: "foreach($applicationPool in ${{ parameters.applicationPools }}) { Start-WebAppPool $applicationPool}" 
