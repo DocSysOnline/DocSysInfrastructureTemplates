@@ -26,10 +26,8 @@ parameters:
 - name: useMustacheForConfig
   type: boolean
   default: false
-  # make required when every component uses mustache
 - name: docSysConfigurationFilePath
   type: string
-  default: ''
 
 jobs:
 - deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
