@@ -12,8 +12,6 @@ function Format-ConfigurationFiles {
     $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
     $secrets = $args
 
-    Write-Host $secrets
-
     foreach ($secret in $secrets.GetEnumerator()) {
         $splitSecret = $secret -split '='
         Add-SecretsToDottedPath -Root $values -Path $splitSecret[0] -Value $splitSecret[1]
