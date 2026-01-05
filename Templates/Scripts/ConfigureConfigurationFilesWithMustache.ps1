@@ -10,13 +10,13 @@ function Format-ConfigurationFiles {
     }
     
     $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
-    $secrets = $args
+    $secretpairs = $args
 
-    Write-Output $secrets
+    Write-Output $secretpairs
 
-    foreach ($secret in $secrets.GetEnumerator()) {
-        $splitSecret = $secret -split '='
-        Add-SecretsToDottedPath -Root $values -Path $splitSecret[0] -Value $splitSecret[1]
+    foreach ($secretpair in $secretpairs.GetEnumerator()) {
+        $key, $secret = $secretpair -split '=',2 
+        Add-SecretsToDottedPath -Root $values -Path $key -Value $secret
     }
 
     Write-Output "Combined configuration input"
