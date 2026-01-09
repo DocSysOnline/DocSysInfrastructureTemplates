@@ -5,6 +5,20 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
 }
 
 $configuration = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
+$configuration.PSObject.Properties | ForEach-Object {
+    if ($_.Name -ne 'General')
+    {
+        $uri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/UWV-($_.Name)/$($_.Version.Number)?$env:DeployPackageAccessToken"
+
+        Invoke-WebRequest -Uri $uri -OutFile "$($_.Name).zip"
+    }
+}
+
+
+# foreach ($component in $configuration) {
+#     Write-Host $component
+# }
+
 # $plugins = $configuration."$component".Plugins
 # if($null -ne $plugins)
 # {
