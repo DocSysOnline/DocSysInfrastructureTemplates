@@ -12,7 +12,7 @@ steps:
     targetType: filePath
     filePath: $(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts\DownloadDeployPackages.ps1
     workingDirectory: "$(Pipeline.Workspace)"
-    arguments: '-docSysConfigurationFilePath $(Build.SourcesDirectory)\Infrastructure\Clients\UWV\Config\${{ parameters.docSysConfigurationFilePath }} -deployPackageAccessToken "${{ parameters.deployPackageAccessToken }}"'
+    arguments: '-docSysConfigurationFilePath $(Build.SourcesDirectory)\Infrastructure\Clients\UWV\Config\${{ parameters.docSysConfigurationFilePath }} -deployPackageAccessToken "${{ parameters.deployPackageAccessToken }}" -deployPackageDirectory $(Pipeline.Workspace)/Targets'
 # - task: PowerShell@2
 #   displayName: 'Download deploy package'
 #   condition: eq(variables.useBuildPipelinesAsSource, false)
