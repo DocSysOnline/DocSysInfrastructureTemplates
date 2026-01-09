@@ -1,4 +1,4 @@
-param ($docSysConfigurationFilePath)
+param ($docSysConfigurationFilePath, $deployPackageAccessToken)
 if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Write-Host -ForegroundColor Red "DocSys Configuration file not found."
     Exit
@@ -12,7 +12,7 @@ $configuration.PSObject.Properties | ForEach-Object {
         $client = $_.Value.Version.Client
         $number = $_.Value.Version.Number
 
-        $uri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number`?$env:DeployPackageAccessToken"
+        $uri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number`?$deployPackageAccessToken"
         Write-Host $uri
 
         Invoke-WebRequest -Uri $uri -OutFile "$name.zip"
