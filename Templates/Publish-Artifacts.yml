@@ -1,5 +1,6 @@
 parameters:
 - name: configurationDirectory
+  type: string
 
 steps:
 - publish: '$(Pipeline.Workspace)/Targets'

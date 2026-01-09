@@ -1,6 +1,8 @@
 parameters:
 - name: docSysConfigurationFilePath
+  type: string
 - name: deployPackageAccessToken
+  type: string
 
 steps:    
 - task: PowerShell@2
