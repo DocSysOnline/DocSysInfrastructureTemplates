@@ -8,10 +8,14 @@ $configuration = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Jso
 $configuration.PSObject.Properties | ForEach-Object {
     if ($_.Name -ne 'General')
     {
-        $uri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/UWV-($($_.Name)/$($_.Version.Number)?$env:DeployPackageAccessToken"
+        $name = $_.Name
+        $client = $_.Value.Version.Client
+        $number = $_.Value.Version.Number
+
+        $uri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number`?$env:DeployPackageAccessToken"
         Write-Host $uri
 
-        Invoke-WebRequest -Uri $uri -OutFile "$($_.Name).zip"
+        Invoke-WebRequest -Uri $uri -OutFile "$name.zip"
     }
 }
 
