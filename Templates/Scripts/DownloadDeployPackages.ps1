@@ -12,28 +12,9 @@ $configuration.PSObject.Properties | ForEach-Object {
         $client = $_.Value.Version.Client
         $number = $_.Value.Version.Number
 
-        # $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/latest/Apps.zip?$deployPackageAccessToken"
         $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number/$name.zip?$deployPackageAccessToken"
-        Write-Host "$downloadUri"
-        
         Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
 
-
-        # Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
+        Expand-Archive -Path "$name.zip" -DestinationPath "$(Pipeline.Workspace)/Targets/DeployPackage/$name"
     }
 }
-
-
-# foreach ($component in $configuration) {
-#     Write-Host $component
-# }
-
-# $plugins = $configuration."$component".Plugins
-# if($null -ne $plugins)
-# {
-#     New-Item "$component\bin\Plugins" -ItemType Directory
-#     foreach ($plugin in $plugins) {
-#         Copy-Item -Path "Plugins\$component\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
-#         Write-Host "Copied plugin $($plugin.Name) to component $component"
-#     }
-# }
