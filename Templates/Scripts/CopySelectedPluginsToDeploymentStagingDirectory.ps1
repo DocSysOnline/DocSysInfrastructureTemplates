@@ -10,7 +10,7 @@ if($null -ne $plugins)
 {
     New-Item "$component\bin\Plugins" -ItemType Directory
     foreach ($plugin in $plugins) {
-        Copy-Item -Path "Plugins\$component\$plugin" -Destination "$component\bin\Plugins"
-        Write-Host "Copied plugin $plugin to component $component"
+        Copy-Item -Path "Plugins\$component\$($plugin.Name)" -Destination "$component\bin\Plugins"
+        Write-Host "Copied plugin $($plugin.Name) to component $component"
     }
 }
