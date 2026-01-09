@@ -12,10 +12,12 @@ $configuration.PSObject.Properties | ForEach-Object {
         $client = $_.Value.Version.Client
         $number = $_.Value.Version.Number
 
-        $uri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number`?$deployPackageAccessToken"
-        Write-Host $uri
+        Invoke-WebRequest -Uri "https://docsysdeploysg.blob.core.windows.net/deployment-container/latest/Apps.zip?$deployPackageAccessToken" -OutFile 'DeployPackage.zip'
 
-        Invoke-WebRequest -Uri $uri -OutFile "$name.zip"
+        $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number`?$deployPackageAccessToken"
+        Write-Host $downloadUri
+
+        Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
     }
 }
 
