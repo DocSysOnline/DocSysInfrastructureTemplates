@@ -8,6 +8,6 @@ steps:
 - publish: '$(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts'
   displayName: 'Publish scripts'
   artifact: scripts
-- publish: ${{ parameters.componentSuffix }}
+- publish: ${{ parameters.configurationDirectory }}
   displayName: 'Publish configurations'
   artifact: config
