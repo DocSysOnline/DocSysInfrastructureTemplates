@@ -10,7 +10,7 @@ steps:
   inputs:
     pwsh: true
     targetType: filePath
-    filePath: $(Pipeline.Workspace)\scripts\DownloadDeployPackages.ps1
+    filePath: $(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts\DownloadDeployPackages.ps1
     workingDirectory: "$(Pipeline.Workspace)"
     arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }}'
 # - task: PowerShell@2
