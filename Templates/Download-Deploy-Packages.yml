@@ -1,0 +1,20 @@
+parameters:
+- name: docSysConfigurationFilePath
+- name: deployPackageAccessToken
+
+steps:    
+- task: PowerShell@2
+  displayName: 'Download deploy package'
+  condition: eq(variables.useBuildPipelinesAsSource, false)
+  inputs:
+    targetType: 'inline'
+    script: |
+      Invoke-WebRequest -Uri "https://docsysdeploysg.blob.core.windows.net/deployment-container/latest/Apps.zip?$env:DeployPackageAccessToken" -OutFile 'DeployPackage.zip'
+  env:
+    DeployPackageAccessToken: {{ parameters.deployPackageAccessToken }}
+- task: ExtractFiles@1
+  displayName: 'Extract deploy package'
+  condition: eq(variables.useBuildPipelinesAsSource, false)
+  inputs:
+    archiveFilePatterns: DeployPackage.zip
+    destinationFolder: '$(Pipeline.Workspace)/Targets'
