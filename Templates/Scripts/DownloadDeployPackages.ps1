@@ -16,5 +16,7 @@ $configuration.PSObject.Properties | ForEach-Object {
         Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
 
         Expand-Archive -Path "$name.zip" -DestinationPath "$deployPackageDirectory/DeployPackage/$name"
+
+        Write-Host "Downloaded $name version: $number for client: $uwv"
     }
 }
