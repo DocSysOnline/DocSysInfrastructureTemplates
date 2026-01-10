@@ -9,15 +9,21 @@ $configuration.PSObject.Properties | ForEach-Object {
     if ($_.Name -ne 'General')
     {
         $name = $_.Name
-        $client = $_.Value.Version.Client
         $number = $_.Value.Version.Number
+        
+        if([bool]($_.Value.PSobject.Properties.name -match "Client")) {
+            $client = $_.Value.Version.Client
+            $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number/$name.zip?$deployPackageAccessToken"
+        }
+        else {
+            $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$name/$number/$name.zip?$deployPackageAccessToken"
+        }
 
-        $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number/$name.zip?$deployPackageAccessToken"
         Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
 
         Expand-Archive -Path "$name.zip" -DestinationPath "$deployPackageDirectory/$name"
 
-        Write-Host "Downloaded $name version: $number for client: $uwv"
+        Write-Host "Downloaded $name version: $number for client: $client"
 
         if([bool]($_.Value.PSobject.Properties.name -match "Plugins"))
         {
