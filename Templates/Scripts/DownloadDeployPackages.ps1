@@ -11,7 +11,7 @@ $configuration.PSObject.Properties | ForEach-Object {
         $name = $_.Name
         $number = $_.Value.Version.Number
         
-        if([bool]($_.Value.PSobject.Properties.name -match "Client")) {
+        if([bool]($_.Value.Version.PSobject.Properties.name -match "Client")) {
             $client = $_.Value.Version.Client
             $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$client-$name/$number/$name.zip?$deployPackageAccessToken"
         }
