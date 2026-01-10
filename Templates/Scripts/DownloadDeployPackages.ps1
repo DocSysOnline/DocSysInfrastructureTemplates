@@ -27,8 +27,9 @@ $configuration.PSObject.Properties | ForEach-Object {
         {
             foreach($plugin in $_.Value.Plugins)
             {
-
-
+                if (-not(Test-Path $deployPackageDirectory/Plugins -PathType Container)) {
+                    New-Item -path $deployPackageDirectory/Plugins -ItemType Directory
+                }
 
                 $name = $plugin.Name
                 $number = $plugin.Version.Number
