@@ -18,11 +18,7 @@ $configuration.PSObject.Properties | ForEach-Object {
         else {
             $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$name/$number/$name.zip?$deployPackageAccessToken"
         }
-
-        Write-Host $downloadUri
-
         Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
-
         Expand-Archive -Path "$name.zip" -DestinationPath "$deployPackageDirectory/$name"
 
         Write-Host "Downloaded $name version: $number for client: $client"
@@ -31,7 +27,20 @@ $configuration.PSObject.Properties | ForEach-Object {
         {
             foreach($plugin in $_.Value.Plugins)
             {
-                Write-Host $plugin
+                $name = $plugin.Name
+                $number = $plugin.Version.Number
+
+                if([bool]($plugin.Version.PSobject.Properties.name -match "Client")) {
+                    $client = $_.Value.Version.Client
+                    $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$client-$name/$number/$name.dll?$deployPackageAccessToken"
+                }
+                else {
+                    $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$name/$number/$name.dll?$deployPackageAccessToken"
+                }
+                Write-Host $downloadUri
+                Invoke-WebRequest -Uri $downloadUri -OutFile "$deployPackageDirectory/Plugins/$name.dll"
+
+                Write-Host "Downloaded $name version: $number for client: $client"
             }
         }
     }
