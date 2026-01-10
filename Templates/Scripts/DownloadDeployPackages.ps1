@@ -18,5 +18,13 @@ $configuration.PSObject.Properties | ForEach-Object {
         Expand-Archive -Path "$name.zip" -DestinationPath "$deployPackageDirectory/DeployPackage/$name"
 
         Write-Host "Downloaded $name version: $number for client: $uwv"
+
+        if([bool]($_.Value.PSobject.Properties.name -match "Plugins"))
+        {
+            foreach($plugin in $_.Value.Plugins)
+            {
+                Write-Host $plugin
+            }
+        }
     }
 }
