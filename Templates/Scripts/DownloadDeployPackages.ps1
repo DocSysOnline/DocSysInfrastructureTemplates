@@ -19,6 +19,8 @@ $configuration.PSObject.Properties | ForEach-Object {
             $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/$name/$number/$name.zip?$deployPackageAccessToken"
         }
 
+        Write-Host $downloadUri
+
         Invoke-WebRequest -Uri $downloadUri -OutFile "$name.zip"
 
         Expand-Archive -Path "$name.zip" -DestinationPath "$deployPackageDirectory/$name"
