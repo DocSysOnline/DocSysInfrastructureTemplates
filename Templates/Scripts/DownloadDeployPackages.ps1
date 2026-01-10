@@ -42,7 +42,6 @@ $configuration.PSObject.Properties | ForEach-Object {
                 else {
                     $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$name/$number/$name.dll?$deployPackageAccessToken"
                 }
-                Write-Host $downloadUri
                 Invoke-WebRequest -Uri $downloadUri -OutFile "$deployPackageDirectory/Plugins/$name.dll"
 
                 Write-Host "Downloaded $name version: $number for client: $client"
