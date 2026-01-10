@@ -33,6 +33,7 @@ $configuration.PSObject.Properties | ForEach-Object {
 
                 $name = $plugin.Name
                 $number = $plugin.Version.Number
+                $client = $null
 
                 if([bool]($plugin.Version.PSobject.Properties.name -match "Client")) {
                     $client = $_.Value.Version.Client
