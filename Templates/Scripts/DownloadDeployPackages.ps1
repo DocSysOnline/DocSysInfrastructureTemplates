@@ -27,6 +27,9 @@ $configuration.PSObject.Properties | ForEach-Object {
         {
             foreach($plugin in $_.Value.Plugins)
             {
+
+
+
                 $name = $plugin.Name
                 $number = $plugin.Version.Number
 
@@ -38,7 +41,7 @@ $configuration.PSObject.Properties | ForEach-Object {
                     $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$name/$number/$name.dll?$deployPackageAccessToken"
                 }
                 Write-Host $downloadUri
-                Invoke-WebRequest -Uri $downloadUri -OutFile "$deployPackageDirectory/Plugins/$name.dll"
+                Invoke-WebRequest -Uri $downloadUri -OutFile "$deployPackageDirectory/Plugins/$name.dll" -Force
 
                 Write-Host "Downloaded $name version: $number for client: $client"
             }
