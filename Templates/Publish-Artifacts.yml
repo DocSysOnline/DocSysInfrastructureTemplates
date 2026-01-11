@@ -1,0 +1,14 @@
+parameters:
+- name: configurationDirectory
+  type: string
+
+steps:
+- publish: '$(Pipeline.Workspace)/Targets'
+  displayName: 'Publish deploy package'
+  artifact: deployPackage
+- publish: '$(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts'
+  displayName: 'Publish scripts'
+  artifact: scripts
+- publish: ${{ parameters.configurationDirectory }}
+  displayName: 'Publish configurations'
+  artifact: config
