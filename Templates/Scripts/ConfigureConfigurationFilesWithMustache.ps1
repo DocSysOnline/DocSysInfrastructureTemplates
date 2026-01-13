@@ -26,7 +26,8 @@ function Format-ConfigurationFiles {
     Write-Output "Starting configuration file generation"
 
     Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
-        $configuredFile = $_.Replace('.mustache','') 
+        $configuredFile = $_.Replace('.mustache','')
+        Write-Output "Configuring $configuredFile with mustache"
         $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile -Encoding utf8
         Write-Output "Configurationfile $configuredFile created."
     }
@@ -61,4 +62,6 @@ function Add-SecretsToDottedPath {
     }
 }
 
+$PSVersionTable
+Get-InstalledModule -Name PSMustache
 Format-ConfigurationFiles -docSysConfigurationFilePath $docSysConfigurationFilePath $args
