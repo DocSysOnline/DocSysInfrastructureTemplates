@@ -6,5 +6,9 @@ for ($i = 0; $i -lt 3; $i++) {
     if (Test-Path -Path $temporaryASPNetFilesFolder -eq false) {
         break
     }
-    Remove-Item -Path $temporaryASPNetFilesFolder -Recurse
+    try
+    {
+        Remove-Item -Path $temporaryASPNetFilesFolder -Recurse
+    }
+    catch { }
 }
