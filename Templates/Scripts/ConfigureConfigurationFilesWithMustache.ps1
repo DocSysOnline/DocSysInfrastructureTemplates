@@ -10,7 +10,7 @@ function Format-ConfigurationFiles {
     }
     
     $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
-    $secretpairs = $args
+    $secretpairs = $args[0]
 
     Write-Output $secretpairs
 
