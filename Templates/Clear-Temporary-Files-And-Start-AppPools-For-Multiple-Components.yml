@@ -1,7 +1,7 @@
 parameters:
 - name: environment
   type: string
-- name: serverName
+- name: serverNames
   type: string
 - name: components
   type: object
@@ -36,7 +36,7 @@ jobs:
         - task: PowerShellOnTargetMachines@3
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
           inputs:
-            Machines: ${{ parameters.serverName }}
+            Machines: ${{ parameters.serverNames }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             ScriptType: FilePath
@@ -46,7 +46,7 @@ jobs:
           - task: PowerShellOnTargetMachines@3
             displayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"
             inputs:
-              Machines: ${{ parameters.serverName }}
+              Machines: ${{ parameters.serverNames }}
               UserName: $(DeployUserName)
               UserPassword: $(DeployUserPassword)
               InlineScript: "Start-WebAppPool ${{ applicationPool }}"

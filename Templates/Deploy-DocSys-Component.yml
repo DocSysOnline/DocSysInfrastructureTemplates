@@ -10,7 +10,7 @@ parameters:
   default: ''
 - name: environment
   type: string
-- name: serverName
+- name: serverNames
   type: string
 - name: iisSiteName
   type: string
@@ -58,7 +58,7 @@ jobs:
           displayName: "Deploy scripts to ${{ parameters.environment }} server"
           inputs:
             SourcePath: "$(Pipeline.Workspace)/scripts"
-            MachineNames: ${{ parameters.serverName }}
+            MachineNames: ${{ parameters.serverNames }}
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
@@ -83,7 +83,7 @@ jobs:
         - task: PowerShellOnTargetMachines@3
           displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           inputs:
-            Machines: ${{ parameters.serverName }}
+            Machines: ${{ parameters.serverNames }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: |
@@ -92,7 +92,7 @@ jobs:
           displayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
           inputs:
             SourcePath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            MachineNames: ${{ parameters.serverName }}
+            MachineNames: ${{ parameters.serverNames }}
             AdminUserName: $(DeployUserName)
             AdminPassword: $(DeployUserPassword)
             TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
@@ -108,7 +108,7 @@ jobs:
           condition: ${{ eq(parameters.useMustacheForConfig, false) }}
           displayName: "Copy config"
           inputs:
-            Machines: ${{ parameters.serverName }}
+            Machines: ${{ parameters.serverNames }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: |
@@ -117,7 +117,7 @@ jobs:
           displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
           condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
           inputs:
-            Machines: ${{ parameters.serverName }}
+            Machines: ${{ parameters.serverNames }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             ScriptType: FilePath
@@ -127,7 +127,7 @@ jobs:
           displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
           condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
           inputs:
-            Machines: ${{ parameters.serverName }}
+            Machines: ${{ parameters.serverNames }}
             UserName: $(DeployUserName)
             UserPassword: $(DeployUserPassword)
             InlineScript: "Start-WebAppPool $(applicationPoolName)" 
