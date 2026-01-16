@@ -13,4 +13,4 @@ if($null -ne $plugins)
         Copy-Item -Path "Plugins\$component\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
         Write-Host "Copied plugin $($plugin.Name) to component $component"
     }
-}
+}!
