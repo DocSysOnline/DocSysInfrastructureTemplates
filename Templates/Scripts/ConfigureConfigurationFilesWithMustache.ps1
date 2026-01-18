@@ -33,7 +33,7 @@ function Merge-JsonObject {
 }
 
 function Format-ConfigurationFiles {
-    param ()
+    param ($docSysConfigurationFilePath)
 
     if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
         Write-Output -ForegroundColor Red "DocSys Configuration file not found."
@@ -68,7 +68,7 @@ function Format-ConfigurationFiles {
         Throw "Only configurations filenames with 2 or 3 dots supported"
     }
     
-    $secretpairs = $args[2]
+    $secretpairs = $args[0]
 
     Write-Output $secretpairs
 
