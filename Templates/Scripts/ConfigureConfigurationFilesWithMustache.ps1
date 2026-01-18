@@ -1,6 +1,37 @@
 param ($docSysConfigurationFilePath)
 Install-Module -Name PSMustache -Scope CurrentUser -Force
 
+function Merge-JsonObject {
+    param (
+        [Parameter(Mandatory)]
+        [psobject]$Base,
+
+        [Parameter(Mandatory)]
+        [psobject]$Override
+    )
+
+    foreach ($prop in $Override.PSObject.Properties) {
+
+        if (
+            $Base.PSObject.Properties[$prop.Name] -and
+            $Base.$($prop.Name) -is [psobject] -and
+            $prop.Value -is [psobject]
+        ) {
+            # Both values are objects → recurse
+            Merge-JsonObject -Base $Base.$($prop.Name) -Override $prop.Value
+        }
+        else {
+            # Override or add
+            $Base | Add-Member `
+                -NotePropertyName $prop.Name `
+                -NotePropertyValue $prop.Value `
+                -Force
+        }
+    }
+
+    return $Base
+}
+
 function Format-ConfigurationFiles {
     param ($docSysConfigurationFilePath)
 
@@ -8,8 +39,35 @@ function Format-ConfigurationFiles {
         Write-Output -ForegroundColor Red "DocSys Configuration file not found."
         Exit
     }
+
+    $configurationFileName = Split-Path $docSysConfigurationFilePath -Leaf
+    $configurationDirectory = Split-Path $docSysConfigurationFilePath -Parent
+
+    $parts = $configurationFileName -split '\.'
+    if($parts.count -eq 2) {
+        $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
+    }
+    elseif($parts.count -eq 3) {
+        $rootFilePath = $configurationDirectory + '\' + $parts[0] + '.'  + $parts[2]
+
+        if (-not (Test-Path -Path $rootFilePath)) {
+            Write-Output -ForegroundColor Yellow "DocSys root Configuration file not found. Using regular configuration file."
+            $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
+        }
+        else {
+            $root = Get-Content $rootFilePath -Raw | ConvertFrom-Json
+            $override = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
+
+            $json = Merge-JsonObject -Base $root -Override $override | Select-Object -Last 1 | ConvertTo-Json -Depth 10
+            Write-Output "Merged configuration input"
+            Write-Host $json
+            $values = $json | ConvertFrom-Json -AsHashtable
+        }
+    }
+    else {
+        Throw "Only configurations filenames with 2 or 3 dots supported"
+    }
     
-    $values = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json -AsHashtable
     $secretpairs = $args[0]
 
     Write-Output $secretpairs
