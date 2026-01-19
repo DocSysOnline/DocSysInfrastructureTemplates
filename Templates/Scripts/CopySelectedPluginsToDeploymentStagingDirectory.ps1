@@ -4,7 +4,28 @@ if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
     Exit
 }
 
-$configuration = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
+$configurationFileName = Split-Path $docSysConfigurationFilePath -Leaf
+$configurationDirectory = Split-Path $docSysConfigurationFilePath -Parent
+
+$parts = $configurationFileName -split '\.'
+if($parts.count -eq 2) {
+    $configuration = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
+}
+elseif($parts.count -eq 3) {
+    $rootFilePath = $configurationDirectory + '\' + $parts[0] + '.'  + $parts[2]
+
+    if (-not (Test-Path -Path $rootFilePath)) {
+        Write-Output -ForegroundColor Yellow "DocSys root Configuration file not found. Using regular configuration file."
+        $configuration = Get-Content $docSysConfigurationFilePath -Raw | ConvertFrom-Json
+    }
+    else {
+        $configuration = Get-Content $rootFilePath -Raw | ConvertFrom-Json
+    }
+}
+else {
+    Throw "Only configurations filenames with 2 or 3 dots supported"
+}
+
 $plugins = $configuration."$component".Plugins
 if($null -ne $plugins)
 {
