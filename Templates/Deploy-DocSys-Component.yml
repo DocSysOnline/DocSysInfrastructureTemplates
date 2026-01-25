@@ -19,9 +19,6 @@ parameters:
   type: string
 - name: applicationPoolPrefix
   type: string
-- name: secrets
-  type: string
-  default: ''
 - name: clearTemporaryFilesPerComponent
   type: string
   default: true
@@ -31,6 +28,13 @@ parameters:
   default: false
 - name: docSysConfigurationFilePath
   type: string
+- name: repairMalformedJson
+  type: boolean
+  default: true
+- name: secrets
+  type: string
+  default: ''
+  
 
 jobs:
 - deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
@@ -71,7 +75,7 @@ jobs:
             targetType: filePath
             filePath: $(Pipeline.Workspace)\scripts\ConfigureConfigurationFilesWithMustache.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} ${{ parameters.secrets }}'
+            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -reformatJsonOutput ${{ parameters.repairMalformedJson }} ${{ parameters.secrets }}'
         - task: PowerShell@2
           displayName: "Copy selected plugin files to deployment staging directory"
           inputs:

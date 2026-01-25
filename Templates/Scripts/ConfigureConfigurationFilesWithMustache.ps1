@@ -89,6 +89,8 @@ function Format-ConfigurationFiles {
         $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Tee-Object -Variable output
         if($configuredFile.EndsWith(".json") -And $reformatJsonOutput)
         {
+            Write-Output "Repairing malformed json"
+
             #Hacky fix to remove trailing comma's from mustache generated json arrays.
             $output | ConvertFrom-JsonNewtonsoft | ConvertTo-JsonNewtonsoft | Tee-Object -Variable output
         }
