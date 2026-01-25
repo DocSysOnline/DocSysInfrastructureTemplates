@@ -1,5 +1,6 @@
-param ($docSysConfigurationFilePath)
+param ($docSysConfigurationFilePath, $reformatJsonOutput = $true)
 Install-Module -Name PSMustache -Scope CurrentUser -Force
+Install-Module -Name newtonsoft.json -Scope CurrentUser -Force
 
 function Merge-JsonObject {
     param (
@@ -33,7 +34,7 @@ function Merge-JsonObject {
 }
 
 function Format-ConfigurationFiles {
-    param ($docSysConfigurationFilePath)
+    param ($docSysConfigurationFilePath, $reformatJsonOutput)
 
     if (-not (Test-Path -Path $docSysConfigurationFilePath)) {
         Write-Output -ForegroundColor Red "DocSys Configuration file not found."
@@ -85,7 +86,14 @@ function Format-ConfigurationFiles {
 
     Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
         $configuredFile = $_.Replace('.mustache','') 
-        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Out-File -FilePath $configuredFile -Encoding utf8
+        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Tee-Object -Variable output
+        if($configuredFile.EndsWith(".json") -And $reformatJsonOutput)
+        {
+            #Hacky fix to remove trailing comma's from mustache generated json arrays.
+            $output | ConvertFrom-JsonNewtonsoft | ConvertTo-JsonNewtonsoft | Tee-Object -Variable output
+        }
+
+        $output | Out-File -FilePath $configuredFile -Encoding utf8
         Write-Output "Configurationfile $configuredFile created."
     }
 }
@@ -119,4 +127,4 @@ function Add-SecretsToDottedPath {
     }
 }
 
-Format-ConfigurationFiles -docSysConfigurationFilePath $docSysConfigurationFilePath $args
+Format-ConfigurationFiles -docSysConfigurationFilePath $docSysConfigurationFilePath -reformatJsonOutput $reformatJsonOutput $args 
