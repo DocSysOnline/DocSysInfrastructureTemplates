@@ -37,7 +37,7 @@ if($null -ne $languages)
     if(Test-Path -Path "$component\Resources")
     {
         foreach ($language in $languages) {
-            Copy-Item -Path "$component\Resources\$language\*" -Destination "$component\bin"
+            Copy-Item -Path "$component\Resources\$language\*" -Destination "$component\bin\$language"
             Write-Host "Copied language $language to component $component"
         }
     }
