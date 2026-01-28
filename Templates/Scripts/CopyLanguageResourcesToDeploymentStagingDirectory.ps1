@@ -27,10 +27,10 @@ else {
 }
 
 Write-Host $configuration
-Write-Host $configuration.$General
-Write-Host $configuration.$General.$Languages
+Write-Host $configuration.General
+Write-Host $configuration.General.Languages
 
-$languages = $configuration.$General.$Languages
+$languages = $configuration.General.Languages
 Write-Host "Selected languages $languages"
 if($null -ne $languages)
 {
