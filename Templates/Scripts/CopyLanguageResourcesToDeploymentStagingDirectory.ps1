@@ -43,7 +43,7 @@ if($null -ne $languages)
     }
 }
 
-# if(Test-Path -Path "$component\Resources")
-# {
-#     Remove-Item -Path "$component\Resources" -Recurse
-# }
+if(Test-Path -Path "$component\Resources")
+{
+    Remove-Item -Path "$component\Resources" -Recurse
+}
