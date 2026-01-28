@@ -29,14 +29,16 @@ else {
 $languages = $configuration.$General.$Languages
 if($null -ne $languages)
 {
-    # New-Item "$component\bin\Plugins" -ItemType Directory
-    # foreach ($plugin in $plugins) {
-    #     Copy-Item -Path "Plugins\$component\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
-    #     Write-Host "Copied plugin $($plugin.Name) to component $component"
-    # }
+    if(Test-Path -Path "$component\Resources")
+    {
+        # foreach ($language in $languages) {
+        #     Copy-Item -Path "$component\$Resources\$language" -Destination "$component\bin"
+        #     Write-Host "Copied languaguage $($plugin.Name) to component $component"
+        # }
+    }
 }
 
 if(Test-Path -Path "$component\Resources")
 {
-    Remove-Item -Path "$component\Resources"
+    Remove-Item -Path "$component\Resources" -Recurse
 }
