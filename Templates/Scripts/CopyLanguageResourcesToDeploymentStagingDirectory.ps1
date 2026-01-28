@@ -31,10 +31,10 @@ if($null -ne $languages)
 {
     if(Test-Path -Path "$component\Resources")
     {
-        # foreach ($language in $languages) {
-        #     Copy-Item -Path "$component\$Resources\$language" -Destination "$component\bin"
-        #     Write-Host "Copied languaguage $($plugin.Name) to component $component"
-        # }
+        foreach ($language in $languages) {
+            Copy-Item -Path "$component\$Resources\$language" -Destination "$component\bin"
+            Write-Host "Copied language $language to component $component"
+        }
     }
 }
 
