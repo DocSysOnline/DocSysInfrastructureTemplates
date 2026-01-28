@@ -27,6 +27,7 @@ else {
 }
 
 $languages = $configuration.$General.$Languages
+Write-Host "Selected languages $languages"
 if($null -ne $languages)
 {
     if(Test-Path -Path "$component\Resources")
@@ -38,7 +39,7 @@ if($null -ne $languages)
     }
 }
 
-if(Test-Path -Path "$component\Resources")
-{
-    Remove-Item -Path "$component\Resources" -Recurse
-}
+# if(Test-Path -Path "$component\Resources")
+# {
+#     Remove-Item -Path "$component\Resources" -Recurse
+# }
