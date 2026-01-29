@@ -26,10 +26,6 @@ else {
     Throw "Only configurations filenames with 2 or 3 dots supported"
 }
 
-Write-Host $configuration
-Write-Host $configuration.General
-Write-Host $configuration.General.Languages
-
 $languages = $configuration.General.Languages
 Write-Host "Selected languages $languages"
 if($null -ne $languages)

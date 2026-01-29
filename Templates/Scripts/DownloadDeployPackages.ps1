@@ -41,12 +41,13 @@ $configuration.PSObject.Properties | ForEach-Object {
 
                 if([bool]($plugin.Version.PSobject.Properties.name -match "Client")) {
                     $client = $_.Value.Version.Client
-                    $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$client-$pluginName/$number/$pluginName.dll?$deployPackageAccessToken"
+                    $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$client-$pluginName/$number/$pluginName.zip?$deployPackageAccessToken"
                 }
                 else {
-                    $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$pluginName/$number/$pluginName.dll?$deployPackageAccessToken"
+                    $downloadUri = "https://docsysdeploysg.blob.core.windows.net/deployment-container/Plugins/$pluginName/$number/$pluginName.zip?$deployPackageAccessToken"
                 }
-                Invoke-WebRequest -Uri $downloadUri -OutFile "$deployPackageDirectory/Plugins/$componentName/$pluginName.dll"
+                Invoke-WebRequest -Uri $downloadUri -OutFile "$pluginName.zip"
+                Expand-Archive -Path "$pluginName.zip" -DestinationPath "$deployPackageDirectory/Plugins/$componentName/$pluginName"
 
                 Write-Host "Downloaded $pluginName version: $number for client: $client"
             }
