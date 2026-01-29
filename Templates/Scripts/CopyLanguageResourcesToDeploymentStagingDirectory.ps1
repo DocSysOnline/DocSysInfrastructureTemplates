@@ -28,24 +28,19 @@ else {
 
 $languages = $configuration.General.Languages
 Write-Host "Selected languages $languages"
-
-$plugins = $configuration."$component".Plugins
-if($null -ne $plugins)
+if($null -ne $languages)
 {
-    New-Item "$component\bin\Plugins" -ItemType Directory
-    foreach ($plugin in $plugins) {
-        Copy-Item -Path "Plugins\$component\$($plugin.Name)\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
-        Write-Host "Copied plugin $($plugin.Name) to component $component"
-        foreach ($language in $languages)
-        {
-            if (-not(Test-Path $component\bin\$language -PathType Container)) {
-                New-Item -path $component\bin\$language -ItemType Directory
-            }
-
-            if (Test-Path "Plugins\$component\$($plugin.Name)\Resources\$language" -PathType Container) {
-                Copy-Item -Path "Plugins\$component\$($plugin.Name)\Resources\$language\*" -Destination "$component\bin\$language" -Recurse
-                Write-Host "Copied language resources for $language $($plugin.Name) to component $component"
-            }
+    if(Test-Path -Path "$component\Resources")
+    {
+        foreach ($language in $languages) {
+            New-Item -Path "$component\bin\$language" -ItemType Directory
+            Copy-Item -Path "$component\Resources\$language\*" -Destination "$component\bin\$language" -Recurse
+            Write-Host "Copied language $language to component $component"
         }
     }
+}
+
+if(Test-Path -Path "$component\Resources")
+{
+    Remove-Item -Path "$component\Resources" -Recurse
 }

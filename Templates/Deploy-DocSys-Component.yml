@@ -77,6 +77,14 @@ jobs:
             workingDirectory: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -reformatJsonOutput $${{ parameters.repairMalformedJson }} ${{ parameters.secrets }}'
         - task: PowerShell@2
+          displayName: "Copy language resources for selected languages to deployment staging directory"
+          inputs:
+            pwsh: true
+            targetType: filePath
+            filePath: $(Pipeline.Workspace)\scripts\CopyLanguageResourcesToDeploymentStagingDirectory.ps1
+            workingDirectory: "$(Pipeline.Workspace)/deployPackage"
+            arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -component ${{ parameters.component }}'
+        - task: PowerShell@2
           displayName: "Copy selected plugin files to deployment staging directory"
           inputs:
             pwsh: true
