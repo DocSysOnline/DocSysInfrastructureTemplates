@@ -43,7 +43,7 @@ if($null -ne $plugins)
             }
 
             if (Test-Path "Plugins\$component\$($plugin.Name)\Resources\$language" -PathType Container) {
-                Copy-Item -Path "Plugins\$component\$($plugin.Name)\Resources\$language" -Destination "$component\bin\$language" -Recurse
+                Copy-Item -Path "Plugins\$component\$($plugin.Name)\Resources\$language\*" -Destination "$component\bin\$language" -Recurse
                 Write-Host "Copied language resources for $language $($plugin.Name) to component $component"
             }
         }
