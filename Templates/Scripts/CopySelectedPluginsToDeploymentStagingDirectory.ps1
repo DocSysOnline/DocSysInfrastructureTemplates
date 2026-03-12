@@ -26,9 +26,6 @@ else {
     Throw "Only configurations filenames with 2 or 3 dots supported"
 }
 
-$languages = $configuration.General.Languages
-Write-Host "Selected languages $languages"
-
 $plugins = $configuration."$component".Plugins
 if($null -ne $plugins)
 {
@@ -36,6 +33,9 @@ if($null -ne $plugins)
     foreach ($plugin in $plugins) {
         Copy-Item -Path "Plugins\$component\$($plugin.Name)\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
         Write-Host "Copied plugin $($plugin.Name) to component $component"
+        
+        $languages = Get-ChildItem -Path "Plugins\$component\$($plugin.Name)\Resources" -Directory | Select-Object Name | ForEach-Object { $_.Name }
+        Write-Host $languages
         foreach ($language in $languages)
         {
             if (-not(Test-Path $component\bin\$language -PathType Container)) {
