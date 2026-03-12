@@ -34,7 +34,7 @@ if($null -ne $plugins)
         Copy-Item -Path "Plugins\$component\$($plugin.Name)\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
         Write-Host "Copied plugin $($plugin.Name) to component $component"
         
-        $languages = Get-ChildItem -Path "Plugins\$component\$($plugin.Name)\Resources" -Directory | Select-Object Name
+        $languages = Get-ChildItem -Path "Plugins\$component\$($plugin.Name)\Resources" -Directory | Select-Object Name | ForEach-Object { $_.Name }
         Write-Host $languages
         foreach ($language in $languages)
         {
