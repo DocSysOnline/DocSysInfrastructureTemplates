@@ -10,6 +10,9 @@ parameters:
   default: ''
 - name: environment
   type: string
+- name: domain
+  type: string
+  default: ''
 - name: serverNames
   type: string
 - name: iisSiteName
@@ -41,7 +44,7 @@ jobs:
   displayName: "Deploy ${{ parameters.component }}${{ parameters.componentSuffix }} to ${{ parameters.environment }} server"
   workspace:
     clean: all
-  environment: ${{ parameters.environment }} 
+  environment: ${{ coalesce(parameters.domain, parameters.environment) }}
   variables:
     componentName: ${{ parameters.component }}${{ parameters.componentSuffix }}
     applicationPoolName: ${{ parameters.applicationPoolPrefix }}$(componentName)
