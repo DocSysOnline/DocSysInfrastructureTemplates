@@ -1,6 +1,9 @@
 parameters:
 - name: environment
   type: string
+- name: domain
+  type: string
+  default: ''
 - name: serverNames
   type: string
 - name: components
@@ -25,7 +28,7 @@ jobs:
     - ${{ dependsOn }}
   workspace:
     clean: all
-  environment: ${{ parameters.environment }} 
+  environment: ${{ coalesce(parameters.domain, parameters.environment) }}
   strategy:
     runOnce:
       deploy:
