@@ -1,6 +1,16 @@
 param ($docSysConfigurationFilePath, $reformatJsonOutput = $true)
-Install-Module -Name PSMustache -Scope CurrentUser -Force
-Install-Module -Name newtonsoft.json -Scope CurrentUser -Force
+
+$availableModules = Get-Module PSMustache -ListAvailable
+if ($null -eq $availableModules)
+{
+    Install-Module -Name PSMustache -Scope CurrentUser -Force
+}
+
+$availableModules = Get-Module newtonsoft.json -ListAvailable
+if ($null -eq $availableModules)
+{
+    Install-Module -Name newtonsoft.json -Scope CurrentUser -Force
+}
 
 function Merge-JsonObject {
     param (
