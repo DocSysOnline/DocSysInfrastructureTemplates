@@ -31,21 +31,7 @@ if($null -ne $plugins)
 {
     New-Item "$component\bin\Plugins" -ItemType Directory
     foreach ($plugin in $plugins) {
-        Copy-Item -Path "Plugins\$component\$($plugin.Name)\$($plugin.Name).dll" -Destination "$component\bin\Plugins"
+        Copy-Item -Path "Plugins\$component\$($plugin.Name)\*.*" -Destination "$component\bin\Plugins"
         Write-Host "Copied plugin $($plugin.Name) to component $component"
-        
-        $languages = Get-ChildItem -Path "Plugins\$component\$($plugin.Name)\Resources" -Directory | Select-Object Name | ForEach-Object { $_.Name }
-        Write-Host $languages
-        foreach ($language in $languages)
-        {
-            if (-not(Test-Path $component\bin\$language -PathType Container)) {
-                New-Item -path $component\bin\$language -ItemType Directory
-            }
-
-            if (Test-Path "Plugins\$component\$($plugin.Name)\Resources\$language" -PathType Container) {
-                Copy-Item -Path "Plugins\$component\$($plugin.Name)\Resources\$language\*" -Destination "$component\bin\$language" -Recurse
-                Write-Host "Copied language resources for $language $($plugin.Name) to component $component"
-            }
-        }
     }
 }
