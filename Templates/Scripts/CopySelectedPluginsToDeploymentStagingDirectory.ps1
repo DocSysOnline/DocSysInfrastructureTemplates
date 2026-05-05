@@ -31,7 +31,7 @@ if($null -ne $plugins)
 {
     New-Item "$component\bin\Plugins" -ItemType Directory
     foreach ($plugin in $plugins) {
-        Copy-Item -Path "Plugins\$component\$($plugin.Name)\*" -Destination "$component\bin" -Recurse
+        Copy-Item -Path "Plugins\$component\$($plugin.Name)\*" -Destination "$component" -Recurse
         Write-Host "Copied plugin $($plugin.Name) to component $component"
     }
 }
