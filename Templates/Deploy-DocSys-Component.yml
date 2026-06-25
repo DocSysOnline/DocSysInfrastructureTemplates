@@ -28,7 +28,7 @@ parameters:
   # temporary parameter obsolete when all components use mustache for config
 - name: useMustacheForConfig
   type: boolean
-  default: false
+  default: true
 - name: docSysConfigurationFilePath
   type: string
 - name: repairMalformedJson
