@@ -12,5 +12,7 @@ for ($i = 1; $i -le 3; $i++) {
         Write-Output "Clearing temporary plugin files attempt: $i"
         ls $temporaryPluginFilesFolder
     }
-    catch { }
+    catch {
+        Write-Host $_.Exception.Message
+    }
 }
