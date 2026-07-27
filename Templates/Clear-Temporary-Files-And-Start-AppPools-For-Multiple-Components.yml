@@ -45,6 +45,14 @@ jobs:
             ScriptType: FilePath
             ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
             ScriptArguments: '-iisSiteName ${{ parameters.iisSiteName }}'
+        - task: PowerShellOnTargetMachines@3
+          displayName: "Clear temporary plugin files on ${{ parameters.environment }} server"
+          inputs:
+            Machines: ${{ parameters.serverNames }}
+            UserName: $(DeployUserName)
+            UserPassword: $(DeployUserPassword)
+            ScriptType: FilePath
+            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryPluginFiles.ps1
         - ${{ each applicationPool in parameters.applicationPools }}:            
           - task: PowerShellOnTargetMachines@3
             displayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"

@@ -11,5 +11,7 @@ for ($i = 1; $i -le 3; $i++) {
         Remove-Item -Path $temporaryASPNetFilesFolder -Recurse
         Write-Output "Clearing temporary files attempt: $i"
     }
-    catch { }
+    catch {
+        Write-Host $_.Exception.Message
+    }
 }
