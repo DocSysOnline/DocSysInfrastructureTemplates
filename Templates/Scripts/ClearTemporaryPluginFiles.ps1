@@ -7,8 +7,10 @@ for ($i = 1; $i -le 3; $i++) {
     }
     try
     {
+        ls $temporaryPluginFilesFolder
         Remove-Item -Path $temporaryPluginFilesFolder -Recurse
         Write-Output "Clearing temporary plugin files attempt: $i"
+        ls $temporaryPluginFilesFolder
     }
     catch { }
 }
