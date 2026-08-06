@@ -19,7 +19,7 @@ $configuration.PSObject.Properties | ForEach-Object {
             $fileUri = "$deployPackageFileshare/$componentName/$number/$componentName.zip"
         }
         Copy-Item -Path $fileUri -DestinationPath "$componentName.zip"
-        Expand-Archive -Path "$componentName.zip" -DestinationPath "$deployPackageDirectory/$componentName"
+        Expand-Archive -Path "$componentName.zip" -Destination "$deployPackageDirectory/$componentName"
 
         Write-Host "Copied $componentName version: $number for client: $client"
 
@@ -46,7 +46,7 @@ $configuration.PSObject.Properties | ForEach-Object {
                 else {
                     $fileUri = "$deployPackageFileshare/Plugins/$pluginName/$number/$pluginName.zip"
                 }
-                Copy-Item -Path $fileUri -DestinationPath "$componentName.zip"
+                Copy-Item -Path $fileUri -Destination "$pluginName.zip"
                 Expand-Archive -Path "$pluginName.zip" -DestinationPath "$deployPackageDirectory/Plugins/$componentName/$pluginName"
 
                 Write-Host "Downloaded $pluginName version: $number for client: $client"
