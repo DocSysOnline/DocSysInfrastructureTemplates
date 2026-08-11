@@ -1,0 +1,15 @@
+parameters:
+- name: docSysConfigurationFilePath
+  type: string
+- name: deployPackageFileshare
+  type: string
+
+steps:
+- task: PowerShell@2
+  displayName: "Get deploy packages from fileshare"
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: $(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts\GetDeployPackagesFromFileshare.ps1
+    workingDirectory: "$(Pipeline.Workspace)"
+    arguments: '-docSysConfigurationFilePath ${{ parameters.docSysConfigurationFilePath }} -deployPackageFileshare "${{ parameters.deployPackageFileshare }}" -deployPackageDirectory $(Pipeline.Workspace)/Targets'
