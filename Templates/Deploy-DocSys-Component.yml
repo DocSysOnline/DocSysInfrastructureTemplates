@@ -61,14 +61,13 @@ jobs:
         - download: current
           displayName: 'Download configuration'
           artifact: config
-        - task: WindowsMachineFileCopy@2
-          displayName: "Deploy scripts to ${{ parameters.environment }} server"
-          inputs:
-            SourcePath: "$(Pipeline.Workspace)/scripts"
-            MachineNames: ${{ parameters.serverNames }}
-            AdminUserName: $(DeployUserName)
-            AdminPassword: $(DeployUserPassword)
-            TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
+        - template: Copy-Files-Remote.yml
+          parameters:
+            DisplayName: "Deploy scripts to ${{ parameters.environment }} server"
+            Source: "$(Pipeline.Workspace)/scripts"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: UserAccount
+            Destination: "${{ parameters.iisSiteFolderPrefix }}Scripts"
             CleanTargetBeforeCopy: true
         - task: PowerShell@2
           displayName: "Configure configuration files with Mustache in deployment staging directory"
@@ -97,6 +96,7 @@ jobs:
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
         - template: Copy-Files-Remote.yml
           parameters:
+            DisplayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
             Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             Targets: ${{ parameters.serverNames }}
             AccountType: UserAccount

@@ -1,4 +1,6 @@
 parameters:
+- name: DisplayName
+  type: string
 - name: Source
   type: string
 - name: Targets
@@ -16,7 +18,7 @@ parameters:
 
 steps:
 - task: PowerShell@2
-  displayName: "Copy files to remote machines"
+  displayName: ${{ parameters.DisplayName }}
   inputs:
     pwsh: true
     targetType: filePath
