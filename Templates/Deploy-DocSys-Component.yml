@@ -68,7 +68,7 @@ jobs:
             Targets: ${{ parameters.serverNames }}
             AccountType: UserAccount
             Destination: "${{ parameters.iisSiteFolderPrefix }}Scripts"
-            CleanTargetBeforeCopy: false
+            CleanTargetBeforeCopy: true
         - task: PowerShell@2
           displayName: "Configure configuration files with Mustache in deployment staging directory"
           condition: ${{ eq(parameters.useMustacheForConfig, true) }}
