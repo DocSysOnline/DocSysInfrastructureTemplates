@@ -68,7 +68,7 @@ foreach($server in $serverList) {
         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
         
         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-        Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
+        # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
         Write-Host "  Copying $filename to $targetpath on target machine"
         Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
     }
