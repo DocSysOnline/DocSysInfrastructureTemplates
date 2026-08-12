@@ -13,7 +13,7 @@ if ($AccountType -eq 'UserAccount') {
     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
 }
 
-$files = Get-Item -Path $source
+$files = Get-Item -Path $source -Recurse
 
 $sourcedirectory = Get-Item -Path $source
 $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
@@ -53,13 +53,21 @@ foreach($server in $serverList) {
         } -ArgumentList $destination
     }
 
-    Write-Debug "Ensuring destination folder exists on target machine"
+    foreach ($file in $files) {
+        $filepath = Split-Path -Path $file
+        $filename = Split-Path -Path $file -Leaf
 
-    Invoke-Command -Session $session -ScriptBlock { 
-        param($p)
-        New-Item -Path $p -ItemType Directory -Force | Out-Null
-    } -ArgumentList $destination
+        Write-Output $file
 
-    Copy-Item -Path $source -Destination $targetpath -ToSession $session -Force -Recurse
+        $relativepath = $filepath.Replace($sourcepath, "")
+        $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
+        
+        # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
+        # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
+        Write-Host "  Copying $filename to $targetpath on target machine"
+        Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
+    }
+
     Write-Host "Finished copy to server $server"
+
 }
