@@ -5,7 +5,7 @@ parameters:
   type: string
 - name: Pattern
   type: string
-  default: '*'
+  default: ''
 - name: Targets
   type: string
 - name: AccountType
@@ -27,4 +27,4 @@ steps:
     targetType: filePath
     filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
-    arguments: '-source ${{ parameters.Source }} -pattern  -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
+    arguments: '-source ${{ parameters.Source }} -pattern ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
