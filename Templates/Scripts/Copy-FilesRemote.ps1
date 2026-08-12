@@ -42,16 +42,18 @@ foreach($server in $serverList) {
 		$session = New-PSSession -ComputerName $Server
     }
 
-    if ($cleanTargetBeforeCopy) {
-        Write-Debug "Removing folder $destination on target machine"
+    # Write-Host $cleanTargetBeforeCopy
 
-        Invoke-Command -Session $session -ScriptBlock { 
-            param($p)
-            if (Test-Path $p) {
-                Remove-Item -Path $p -Recurse -Force
-            }
-        } -ArgumentList $destination
-    }
+    # if ($cleanTargetBeforeCopy) {
+    #     Write-Debug "Removing folder $destination on target machine"
+
+    #     Invoke-Command -Session $session -ScriptBlock { 
+    #         param($p)
+    #         if (Test-Path $p) {
+    #             Remove-Item -Path $p -Recurse -Force
+    #         }
+    #     } -ArgumentList $destination
+    # }
 
     Write-Debug "Ensuring destination folder exists on target machine"
 
@@ -60,18 +62,18 @@ foreach($server in $serverList) {
         New-Item -Path $p -ItemType Directory -Force | Out-Null
     } -ArgumentList $destination
 
-    foreach ($file in $files) {
-        $filepath = Split-Path -Path $file
-        $filename = Split-Path -Path $file -Leaf
+    # foreach ($file in $files) {
+    #     $filepath = Split-Path -Path $file
+    #     $filename = Split-Path -Path $file -Leaf
 
-        $relativepath = $filepath.Replace($sourcepath, "")
-        $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
+    #     $relativepath = $filepath.Replace($sourcepath, "")
+    #     $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
         
-        # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-        Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
-        Write-Host "  Copying $filename to $targetpath on target machine"
-        Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
-    }
+    #     # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
+    #     Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
+    #     Write-Host "  Copying $filename to $targetpath on target machine"
+    #     Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
+    # }
 
-    Write-Host "Finished copy to server $server"
+    # Write-Host "Finished copy to server $server"
 }
