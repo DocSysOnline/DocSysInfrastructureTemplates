@@ -22,6 +22,6 @@ steps:
   inputs:
     pwsh: true
     targetType: filePath
-    filePath: $(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts\Copy-FilesRemote.ps1
+    filePath: $(Build.SourcesDirectory)\Scripts\Copy-FilesRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
     arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName -password $(DeployUserPassword) -accountType ${{ parameters.AccountType }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
