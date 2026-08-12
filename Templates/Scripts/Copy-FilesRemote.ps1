@@ -64,10 +64,6 @@ foreach($server in $serverList) {
         $filepath = Split-Path -Path $file
         $filename = Split-Path -Path $file -Leaf
 
-        Write-Output $file
-        Write-Output $filepath
-        Write-Output $filename
-
         $relativepath = $filepath.Replace($sourcepath, "")
         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
 
