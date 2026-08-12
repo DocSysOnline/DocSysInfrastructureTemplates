@@ -95,14 +95,13 @@ jobs:
             UserPassword: $(DeployUserPassword)
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
-        - task: WindowsMachineFileCopy@2
+        - task: Copy-Files-Remote@2
           displayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
           inputs:
-            SourcePath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            MachineNames: ${{ parameters.serverNames }}
-            AdminUserName: $(DeployUserName)
-            AdminPassword: $(DeployUserPassword)
-            TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
+            Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: UserAccount
+            Destination: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
         - task: PowerShell@2
           displayName: "Clear files with potential secrets from agent"

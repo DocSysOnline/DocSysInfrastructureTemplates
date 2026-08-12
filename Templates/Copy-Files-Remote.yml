@@ -1,0 +1,25 @@
+parameters:
+- name: Source
+  type: string
+- name: Targets
+  type: string
+- name: AccountType
+  type: string
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
+- name: Destination
+  type: string
+- name: CleanTargetBeforeCopy
+  type: boolean
+  default: false
+
+steps:
+- task: PowerShell@2
+  displayName: "Copy files to remote machines"
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: $(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts\Copy-FilesRemote.ps1
+    workingDirectory: "$(Pipeline.Workspace)"
+    arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName -password $(DeployUserPassword) -accountType ${{ parameters.AccountType }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
