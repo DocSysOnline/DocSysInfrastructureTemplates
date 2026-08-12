@@ -42,18 +42,18 @@ foreach($server in $serverList) {
 		$session = New-PSSession -ComputerName $Server
     }
 
-    # Write-Host $cleanTargetBeforeCopy
+    Write-Host $cleanTargetBeforeCopy
 
-    # if ($cleanTargetBeforeCopy) {
-    #     Write-Debug "Removing folder $destination on target machine"
+    if ($cleanTargetBeforeCopy) {
+        Write-Debug "Removing folder $destination on target machine"
 
-    #     Invoke-Command -Session $session -ScriptBlock { 
-    #         param($p)
-    #         if (Test-Path $p) {
-    #             Remove-Item -Path $p -Recurse -Force
-    #         }
-    #     } -ArgumentList $destination
-    # }
+        Invoke-Command -Session $session -ScriptBlock { 
+            param($p)
+            if (Test-Path $p) {
+                Remove-Item -Path $p -Recurse -Force
+            }
+        } -ArgumentList $destination
+    }
 
     Write-Debug "Ensuring destination folder exists on target machine"
 
