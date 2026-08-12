@@ -96,7 +96,6 @@ jobs:
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
         - template: Copy-Files-Remote.yml
-          displayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
           parameters:
             Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             Targets: ${{ parameters.serverNames }}
