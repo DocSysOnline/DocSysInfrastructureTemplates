@@ -60,18 +60,6 @@ foreach($server in $serverList) {
         New-Item -Path $p -ItemType Directory -Force | Out-Null
     } -ArgumentList $destination
 
-    foreach ($file in $files) {
-        $filepath = Split-Path -Path $file
-        $filename = Split-Path -Path $file -Leaf
-
-        $relativepath = $filepath.Replace($sourcepath, "")
-        $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
-        
-        # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-        # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
-        Write-Host "  Copying $filename to $targetpath on target machine"
-        Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
-    }
-
+    Copy-Item -Path $source -Destination $targetpath -ToSession $session -Force -Recurse
     Write-Host "Finished copy to server $server"
 }
