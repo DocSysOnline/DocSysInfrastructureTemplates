@@ -18,13 +18,13 @@ $files = Get-ChildItem -Path $source -Recurse
 $sourcedirectory = Get-Item -Path $source
 $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
 
-Write-Debug "Source path is $sourcepath"
+Write-Output "Source path is $sourcepath"
 
 if (-not $destination.EndsWith('\')) {
     $destination = $destination + '\'
 }
 
-Write-Debug "Destination is $destination"
+Write-Output "Destination is $destination"
 
 $serverList = @()
 $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
@@ -62,6 +62,8 @@ foreach($server in $serverList) {
         $relativepath = $filepath.Replace($sourcepath, "")
         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
         
+        
+
         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
         # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
         Write-Host "  Copying $filename to $targetpath on target machine"
