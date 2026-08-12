@@ -14,6 +14,6 @@ steps:
   inputs:
     pwsh: true
     targetType: filePath
-    filePath: $(Build.SourcesDirectory)\DocSysInfrastructureTemplates\Templates\Scripts\DownloadDeployPackages.ps1
+    filePath: $(Build.SourcesDirectory)\Scripts\DownloadDeployPackages.ps1
     workingDirectory: "$(Pipeline.Workspace)"
     arguments: '-docSysConfigurationFilePath ${{ parameters.docSysConfigurationFilePath }} -deployPackageAccessToken "${{ parameters.deployPackageAccessToken }}" -deployPackageDirectory $(Pipeline.Workspace)/Targets'
