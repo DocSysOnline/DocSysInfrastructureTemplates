@@ -24,4 +24,4 @@ steps:
     targetType: filePath
     filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
-    arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -accountType ${{ parameters.AccountType }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
+    arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
