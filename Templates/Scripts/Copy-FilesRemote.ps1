@@ -13,7 +13,7 @@ if ($AccountType -eq 'UserAccount') {
     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
 }
 
-$files = Get-Items -Path $source
+$files = Get-Item -Path $source
 
 $sourcedirectory = Get-Item -Path $source
 $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
