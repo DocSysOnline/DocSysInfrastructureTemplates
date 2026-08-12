@@ -1,97 +1,79 @@
-[cmdletbinding()]
-param()
-
-. "$PSScriptRoot\CdnFunctions\CdnFunctions.ps1"
+param ($source, $pattern, $targets, $accountType, $username, $password, $destination, $cleanTargetBeforeCopy)
 
 $ErrorActionPreference = "Stop"
 
-Trace-VstsEnteringInvocation $MyInvocation
+# Write-Debug "Creating credential object for $username"
 
-try {
-    $source = Get-VstsInput -Name source -Require
-    $pattern = Get-VstsInput -Name pattern -Require
-    $targets = Get-VstsInput -Name targets -Require
-	$accountType = Get-VstsInput -Name accountType -Require
-    $username = Get-VstsInput -Name username
-    $password = Get-VstsInput -Name password
-    $destination = Get-VstsInput -Name destination -Require
-    $cleanTargetBeforeCopy = Get-VstsInput -Name cleanTargetBeforeCopy -AsBool    
+# if ($AccountType -eq 'UserAccount') {
+# 	if (-not $username -or -not $password) {
+# 		throw "Username and/or password missing."
+# 	}
 
-    # Write-Debug "Creating credential object for $username"
-    
-    # if ($AccountType -eq 'UserAccount') {
-	# 	if (-not $username -or -not $password) {
-	# 		throw "Username and/or password missing."
-	# 	}
+# 	Write-Host "Creating credential object for user '$username'."
+#     $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+#     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
+# }
 
-	# 	Write-Host "Creating credential object for user '$username'."
-    #     $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-    #     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
-    # }
+# $patternArray = $pattern.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
+# $files = @(Find-VstsMatch -DefaultRoot $source -Pattern $patternArray)
 
-    # $patternArray = $pattern.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
-    # $files = @(Find-VstsMatch -DefaultRoot $source -Pattern $patternArray)
-    
-    # $sourcedirectory = Get-Item -Path $source
-    # $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
+# $sourcedirectory = Get-Item -Path $source
+# $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
 
-    # Write-Debug "Source path is $sourcepath"
+# Write-Debug "Source path is $sourcepath"
 
-    # if (-not $destination.EndsWith('\')) {
-    #     $destination = $destination + '\'
-    # }
+# if (-not $destination.EndsWith('\')) {
+#     $destination = $destination + '\'
+# }
 
-    # Write-Debug "Destination is $destination"
-    
-    # $serverList = @()
-    # $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | foreach { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+# Write-Debug "Destination is $destination"
 
-    # foreach($server in $serverList) {
-    #     Write-Host "Starting copy to server $server"
+# $serverList = @()
+# $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | foreach { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
-    #     if ($credential) {
-	# 		Write-Host "Creating session to '$server' for '$username'."
-    #         $session = New-PSSession -ComputerName $server -Credential $credential
-    #     }
-    #     else
-    #     {
-	# 		Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
-	# 		$session = New-PSSession -ComputerName $Server
-    #     }
+# foreach($server in $serverList) {
+#     Write-Host "Starting copy to server $server"
 
-    #     if ($cleanTargetBeforeCopy) {
-    #         Write-Debug "Removing folder $destination on target machine"
+#     if ($credential) {
+# 		Write-Host "Creating session to '$server' for '$username'."
+#         $session = New-PSSession -ComputerName $server -Credential $credential
+#     }
+#     else
+#     {
+# 		Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
+# 		$session = New-PSSession -ComputerName $Server
+#     }
 
-    #         Invoke-Command -Session $session -ScriptBlock { 
-    #             param($p)
-    #             if (Test-Path $p) {
-    #                 Remove-Item -Path $p -Recurse -Force
-    #             }
-    #         } -ArgumentList $destination
-    #     }
+#     if ($cleanTargetBeforeCopy) {
+#         Write-Debug "Removing folder $destination on target machine"
 
-    #     Write-Debug "Ensuring destination folder exists on target machine"
+#         Invoke-Command -Session $session -ScriptBlock { 
+#             param($p)
+#             if (Test-Path $p) {
+#                 Remove-Item -Path $p -Recurse -Force
+#             }
+#         } -ArgumentList $destination
+#     }
 
-    #     Invoke-Command -Session $session -ScriptBlock { 
-    #         param($p)
-    #         New-Item -Path $p -ItemType Directory -Force | Out-Null
-    #     } -ArgumentList $destination
+#     Write-Debug "Ensuring destination folder exists on target machine"
 
-    #     foreach ($file in $files) {
-    #         $filepath = Split-Path -Path $file
-    #         $filename = Split-Path -Path $file -Leaf
+#     Invoke-Command -Session $session -ScriptBlock { 
+#         param($p)
+#         New-Item -Path $p -ItemType Directory -Force | Out-Null
+#     } -ArgumentList $destination
 
-    #         $relativepath = $filepath.Replace($sourcepath, "")
-    #         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
-            
-    #         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-    #         Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
-    #         Write-Host "  Copying $filename to $targetpath on target machine"
-    #         Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
-    #     }
+#     foreach ($file in $files) {
+#         $filepath = Split-Path -Path $file
+#         $filename = Split-Path -Path $file -Leaf
 
-    #     Write-Host "Finished copy to server $server"
-    # }
-} finally {
-    Trace-VstsLeavingInvocation $MyInvocation
-}
+#         $relativepath = $filepath.Replace($sourcepath, "")
+#         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
+        
+#         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
+#         Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
+#         Write-Host "  Copying $filename to $targetpath on target machine"
+#         Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
+#     }
+
+#     Write-Host "Finished copy to server $server"
+# }
