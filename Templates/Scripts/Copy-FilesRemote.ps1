@@ -1,4 +1,4 @@
-param ($source, $pattern, $targets, $accountType, $username, $password, $destination, $cleanTargetBeforeCopy)
+param ($source, $targets, $accountType, $username, [SecureString] $password, $destination, $cleanTargetBeforeCopy)
 
 $ErrorActionPreference = "Stop"
 
@@ -13,8 +13,7 @@ if ($AccountType -eq 'UserAccount') {
     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
 }
 
-$patternArray = $pattern.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
-$files = @(Find-VstsMatch -DefaultRoot $source -Pattern $patternArray)
+$files = Get-Items -Path $source
 
 $sourcedirectory = Get-Item -Path $source
 $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
