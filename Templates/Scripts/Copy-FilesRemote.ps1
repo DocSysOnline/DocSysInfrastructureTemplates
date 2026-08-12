@@ -27,7 +27,7 @@ if (-not $destination.EndsWith('\')) {
 Write-Debug "Destination is $destination"
 
 $serverList = @()
-$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | foreach { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
 foreach($server in $serverList) {
     Write-Host "Starting copy to server $server"
