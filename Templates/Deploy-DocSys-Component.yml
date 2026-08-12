@@ -95,7 +95,7 @@ jobs:
             UserPassword: $(DeployUserPassword)
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
-        - task: Copy-Files-Remote@2
+        - task: Copy-Files-Remote.yml
           displayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
           inputs:
             Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
