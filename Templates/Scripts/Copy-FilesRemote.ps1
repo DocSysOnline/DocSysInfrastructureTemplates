@@ -53,6 +53,13 @@ foreach($server in $serverList) {
         } -ArgumentList $destination
     }
 
+    Write-Debug "Ensuring destination folder exists on target machine"
+
+    Invoke-Command -Session $session -ScriptBlock { 
+        param($p)
+        New-Item -Path $p -ItemType Directory -Force | Out-Null
+    } -ArgumentList $destination
+
     foreach ($file in $files) {
         $filepath = Split-Path -Path $file
         $filename = Split-Path -Path $file -Leaf
@@ -63,8 +70,6 @@ foreach($server in $serverList) {
 
         $relativepath = $filepath.Replace($sourcepath, "")
         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
-        
-        
 
         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
         # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
