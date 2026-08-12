@@ -1,4 +1,4 @@
-param ($source, $targets, $accountType, $username, [SecureString] $password, $destination, $cleanTargetBeforeCopy)
+param ($source, $targets, $accountType, $username, $password, $destination, $cleanTargetBeforeCopy)
 
 $ErrorActionPreference = "Stop"
 
