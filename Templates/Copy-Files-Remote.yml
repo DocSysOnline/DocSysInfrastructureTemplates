@@ -5,6 +5,7 @@ parameters:
   type: string
 - name: Pattern
   type: string
+  default: ''
 - name: Targets
   type: string
 - name: AccountType
