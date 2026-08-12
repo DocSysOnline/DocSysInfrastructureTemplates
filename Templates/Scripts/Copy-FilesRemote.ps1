@@ -13,66 +13,66 @@ if ($AccountType -eq 'UserAccount') {
     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
 }
 
-# $patternArray = $pattern.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
-# $files = @(Find-VstsMatch -DefaultRoot $source -Pattern $patternArray)
+$patternArray = $pattern.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
+$files = @(Find-VstsMatch -DefaultRoot $source -Pattern $patternArray)
 
-# $sourcedirectory = Get-Item -Path $source
-# $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
+$sourcedirectory = Get-Item -Path $source
+$sourcepath = $sourcedirectory.FullName.TrimEnd('\')
 
-# Write-Debug "Source path is $sourcepath"
+Write-Debug "Source path is $sourcepath"
 
-# if (-not $destination.EndsWith('\')) {
-#     $destination = $destination + '\'
-# }
+if (-not $destination.EndsWith('\')) {
+    $destination = $destination + '\'
+}
 
-# Write-Debug "Destination is $destination"
+Write-Debug "Destination is $destination"
 
-# $serverList = @()
-# $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | foreach { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+$serverList = @()
+$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | foreach { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
-# foreach($server in $serverList) {
-#     Write-Host "Starting copy to server $server"
+foreach($server in $serverList) {
+    Write-Host "Starting copy to server $server"
 
-#     if ($credential) {
-# 		Write-Host "Creating session to '$server' for '$username'."
-#         $session = New-PSSession -ComputerName $server -Credential $credential
-#     }
-#     else
-#     {
-# 		Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
-# 		$session = New-PSSession -ComputerName $Server
-#     }
+    if ($credential) {
+		Write-Host "Creating session to '$server' for '$username'."
+        $session = New-PSSession -ComputerName $server -Credential $credential
+    }
+    else
+    {
+		Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
+		$session = New-PSSession -ComputerName $Server
+    }
 
-#     if ($cleanTargetBeforeCopy) {
-#         Write-Debug "Removing folder $destination on target machine"
+    if ($cleanTargetBeforeCopy) {
+        Write-Debug "Removing folder $destination on target machine"
 
-#         Invoke-Command -Session $session -ScriptBlock { 
-#             param($p)
-#             if (Test-Path $p) {
-#                 Remove-Item -Path $p -Recurse -Force
-#             }
-#         } -ArgumentList $destination
-#     }
+        Invoke-Command -Session $session -ScriptBlock { 
+            param($p)
+            if (Test-Path $p) {
+                Remove-Item -Path $p -Recurse -Force
+            }
+        } -ArgumentList $destination
+    }
 
-#     Write-Debug "Ensuring destination folder exists on target machine"
+    Write-Debug "Ensuring destination folder exists on target machine"
 
-#     Invoke-Command -Session $session -ScriptBlock { 
-#         param($p)
-#         New-Item -Path $p -ItemType Directory -Force | Out-Null
-#     } -ArgumentList $destination
+    Invoke-Command -Session $session -ScriptBlock { 
+        param($p)
+        New-Item -Path $p -ItemType Directory -Force | Out-Null
+    } -ArgumentList $destination
 
-#     foreach ($file in $files) {
-#         $filepath = Split-Path -Path $file
-#         $filename = Split-Path -Path $file -Leaf
+    foreach ($file in $files) {
+        $filepath = Split-Path -Path $file
+        $filename = Split-Path -Path $file -Leaf
 
-#         $relativepath = $filepath.Replace($sourcepath, "")
-#         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
+        $relativepath = $filepath.Replace($sourcepath, "")
+        $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
         
-#         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-#         Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
-#         Write-Host "  Copying $filename to $targetpath on target machine"
-#         Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
-#     }
+        # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
+        Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
+        Write-Host "  Copying $filename to $targetpath on target machine"
+        Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
+    }
 
-#     Write-Host "Finished copy to server $server"
-# }
+    Write-Host "Finished copy to server $server"
+}
