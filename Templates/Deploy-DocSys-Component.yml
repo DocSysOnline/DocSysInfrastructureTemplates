@@ -37,6 +37,12 @@ parameters:
 - name: secrets
   type: string
   default: ''
+- name: AccountType
+  type: string
+  default: UserAccount
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
   
 
 jobs:
@@ -66,7 +72,7 @@ jobs:
             DisplayName: "Deploy scripts to ${{ parameters.environment }} server"
             Source: "$(Pipeline.Workspace)/scripts"
             Targets: ${{ parameters.serverNames }}
-            AccountType: UserAccount
+            AccountType: ${{ parameters.AccountType }}
             Destination: "${{ parameters.iisSiteFolderPrefix }}Scripts"
             CleanTargetBeforeCopy: false
         - task: PowerShell@2
@@ -99,7 +105,7 @@ jobs:
             DisplayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
             Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
             Targets: ${{ parameters.serverNames }}
-            AccountType: UserAccount
+            AccountType: ${{ parameters.AccountType }}
             Destination: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
         - task: PowerShell@2
