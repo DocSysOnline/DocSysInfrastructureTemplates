@@ -25,3 +25,11 @@ steps:
     filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
     arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
+- task: PowerShell@2
+  displayName: ${{ parameters.DisplayName }}
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
+    workingDirectory: "$(Pipeline.Workspace)"
+    arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'            
