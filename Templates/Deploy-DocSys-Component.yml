@@ -37,7 +37,12 @@ parameters:
 - name: secrets
   type: string
   default: ''
-  
+- name: AccountType
+  type: string
+  default: UserAccount
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
 
 jobs:
 - deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
@@ -61,14 +66,13 @@ jobs:
         - download: current
           displayName: 'Download configuration'
           artifact: config
-        - task: WindowsMachineFileCopy@2
-          displayName: "Deploy scripts to ${{ parameters.environment }} server"
-          inputs:
-            SourcePath: "$(Pipeline.Workspace)/scripts"
-            MachineNames: ${{ parameters.serverNames }}
-            AdminUserName: $(DeployUserName)
-            AdminPassword: $(DeployUserPassword)
-            TargetPath: "${{ parameters.iisSiteFolderPrefix }}Scripts"
+        - template: Copy-Files-Remote.yml
+          parameters:
+            DisplayName: "Deploy scripts to ${{ parameters.environment }} server"
+            Source: "$(Pipeline.Workspace)/scripts"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
+            Destination: "${{ parameters.iisSiteFolderPrefix }}Scripts/${{ parameters.component }}${{ parameters.componentSuffix }}"
             CleanTargetBeforeCopy: true
         - task: PowerShell@2
           displayName: "Configure configuration files with Mustache in deployment staging directory"
@@ -87,22 +91,21 @@ jobs:
             filePath: $(Pipeline.Workspace)\scripts\CopySelectedPluginsToDeploymentStagingDirectory.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage"
             arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -component ${{ parameters.component }}'
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+        - template: Execute-Powershell-Remote.yml
+          parameters:
+            DisplayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
+            ScriptType: Inline
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
-        - task: WindowsMachineFileCopy@2
-          displayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
-          inputs:
-            SourcePath: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            MachineNames: ${{ parameters.serverNames }}
-            AdminUserName: $(DeployUserName)
-            AdminPassword: $(DeployUserPassword)
-            TargetPath: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
+        - template: Copy-Files-Remote.yml
+          parameters:
+            DisplayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
+            Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
+            Destination: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
         - task: PowerShell@2
           displayName: "Clear files with potential secrets from agent"
@@ -111,30 +114,31 @@ jobs:
             targetType: inline
             workingDirectory: "$(Pipeline.Workspace)"
             script: "Remove-Item deployPackage -Recurse"
-        - task: PowerShellOnTargetMachines@3
-          condition: ${{ eq(parameters.useMustacheForConfig, false) }}
-          displayName: "Copy config"
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
-            InlineScript: |
-              Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-          condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
-            ScriptType: FilePath
-            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
-            ScriptArguments: '-iisSiteName UWV'
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
-          condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
-            InlineScript: "Start-WebAppPool $(applicationPoolName)" 
+        - ${{ if eq(parameters.useMustacheForConfig, false) }}:
+          - template: Execute-Powershell-Remote.yml
+            parameters:
+              DisplayName: "Copy config"
+              Targets: ${{ parameters.serverNames }}
+              AccountType: ${{ parameters.AccountType }}
+              ScriptType: Inline
+              InlineScript: |
+                Script: |
+                  Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
+        - ${{ if eq(parameters.clearTemporaryFilesPerComponent, true) }}:
+          - template: Execute-Powershell-Remote.yml
+            parameters:
+              DisplayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+              Targets: ${{ parameters.serverNames }}
+              AccountType: ${{ parameters.AccountType }}
+              ScriptType: FilePath
+              ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/${{ parameters.component }}${{ parameters.componentSuffix }}/ClearTemporaryASPNetFilesForIISSite.ps1
+              ScriptArguments: '-iisSiteName ${{ parameters.iisSiteName }}'
+          - template: Execute-Powershell-Remote.yml
+            parameters:
+              DisplayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+              Targets: ${{ parameters.serverNames }}
+              AccountType: ${{ parameters.AccountType }}
+              ScriptType: Inline
+              InlineScript: |
+                Script: |
+                  "Start-WebAppPool $(applicationPoolName)" 

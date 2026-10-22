@@ -18,7 +18,7 @@ $configuration.PSObject.Properties | ForEach-Object {
         else {
             $fileUri = "$deployPackageFileshare/$componentName/$number/$componentName.zip"
         }
-        Copy-Item -Path $fileUri -DestinationPath "$componentName.zip"
+        Copy-Item -Path $fileUri -Destination "$componentName.zip"
         Expand-Archive -Path "$componentName.zip" -Destination "$deployPackageDirectory/$componentName"
 
         Write-Host "Copied $componentName version: $number for client: $client"

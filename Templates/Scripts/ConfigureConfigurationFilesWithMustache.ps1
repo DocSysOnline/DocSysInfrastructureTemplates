@@ -3,7 +3,7 @@ param ($docSysConfigurationFilePath, $reformatJsonOutput = $true)
 $availableModules = Get-Module PSMustache -ListAvailable
 if ($null -eq $availableModules)
 {
-    Install-Module -Name PSMustache -Scope CurrentUser -Force
+    Import-Module $PSScriptRoot\PSMustache.psm1
 }
 
 $availableModules = Get-Module newtonsoft.json -ListAvailable
@@ -127,6 +127,8 @@ function Add-SecretsToDottedPath {
             # Final element
             $current[$key] = $Value
         } else {
+
+            $test = $current[$key]
             if (-not $current.ContainsKey($key)) {
                 $current[$key] = @{}
             }

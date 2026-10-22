@@ -1,0 +1,27 @@
+parameters:
+- name: DisplayName
+  type: string
+- name: Source
+  type: string
+- name: Targets
+  type: string
+- name: AccountType
+  type: string
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
+- name: Destination
+  type: string
+- name: CleanTargetBeforeCopy
+  type: boolean
+  default: false
+
+steps:
+- task: PowerShell@2
+  displayName: ${{ parameters.DisplayName }}
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
+    workingDirectory: "$(Pipeline.Workspace)"
+    arguments: '-source ${{ parameters.Source }} -targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'
