@@ -96,7 +96,7 @@ function Format-ConfigurationFiles {
 
     Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
         $configuredFile = $_.Replace('.mustache','') 
-        $template = Get-Content $_ | Out-String; $PSScriptRoot/myScript1.ps1 ConvertFrom-MustacheTemplate -Template $template -Values $values | Tee-Object -Variable output
+        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Tee-Object -Variable output
         if($configuredFile.EndsWith(".json") -And $reformatJsonOutput)
         {
             Write-Output "Repairing malformed json"
