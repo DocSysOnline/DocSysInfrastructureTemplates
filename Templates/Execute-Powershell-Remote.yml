@@ -31,4 +31,4 @@ steps:
     targetType: filePath
     filePath: $(Pipeline.Workspace)\Scripts\Execute-PowerShellRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
-    arguments: '-targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword)'
+    arguments: '-targets ${{ parameters.Targets }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -scriptType ${{ parameters.ScriptType }} -inlineScript ${{ parameters.InlineScript }} -scriptPath ${{ parameters.ScriptPath }} -scriptArguments ${{ parameters.ScriptArguments }}'
