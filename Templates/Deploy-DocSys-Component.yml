@@ -122,7 +122,8 @@ jobs:
               AccountType: ${{ parameters.AccountType }}
               ScriptType: Inline
               InlineScript: |
-                Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
+                Script: |
+                  Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
         - ${{ if eq(parameters.clearTemporaryFilesPerComponent, true) }}:
           - template: Execute-Powershell-Remote.yml
             parameters:
@@ -138,4 +139,6 @@ jobs:
               Targets: ${{ parameters.serverNames }}
               AccountType: ${{ parameters.AccountType }}
               ScriptType: Inline
-              InlineScript: "Start-WebAppPool $(applicationPoolName)" 
+              InlineScript: |
+                Script: |
+                  "Start-WebAppPool $(applicationPoolName)" 
