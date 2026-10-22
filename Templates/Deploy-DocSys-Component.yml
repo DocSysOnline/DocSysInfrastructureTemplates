@@ -43,7 +43,6 @@ parameters:
   values:  # Allowed values for 'accountType'
   - ServiceAccount  
   - UserAccount  
-  
 
 jobs:
 - deployment: Deploy${{ parameters.component }}${{ parameters.componentSuffix }}To${{ parameters.environment }}Server
@@ -92,12 +91,12 @@ jobs:
             filePath: $(Pipeline.Workspace)\scripts\CopySelectedPluginsToDeploymentStagingDirectory.ps1
             workingDirectory: "$(Pipeline.Workspace)/deployPackage"
             arguments: '-docSysConfigurationFilePath $(Pipeline.Workspace)\config\${{ parameters.docSysConfigurationFilePath }} -component ${{ parameters.component }}'
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+        - template: Execute-Powershell-Remote.yml
+          parameters:
+            DisplayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
+            ScriptType: Inline
             InlineScript: |
               if((Get-WebAppPoolState $(applicationPoolName)).Value -eq 'Started') { Stop-WebAppPool $(applicationPoolName) }
         - template: Copy-Files-Remote.yml
@@ -115,30 +114,29 @@ jobs:
             targetType: inline
             workingDirectory: "$(Pipeline.Workspace)"
             script: "Remove-Item deployPackage -Recurse"
-        - task: PowerShellOnTargetMachines@3
+        - template: Execute-Powershell-Remote.yml
           condition: ${{ eq(parameters.useMustacheForConfig, false) }}
-          displayName: "Copy config"
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+          parameters:
+            DisplayName: "Copy config"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
+            ScriptType: Inline
             InlineScript: |
               Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+        - template: Execute-Powershell-Remote.yml
           condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+          parameters:
+            DisplayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
             ScriptType: FilePath
             ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/${{ parameters.component }}${{ parameters.componentSuffix }}/ClearTemporaryASPNetFilesForIISSite.ps1
-            ScriptArguments: '-iisSiteName UWV'
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+            ScriptArguments: '-iisSiteName ${{ parameters.iisSiteName }}'
+        - template: Execute-Powershell-Remote.yml
           condition: ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+          parameters:
+            DisplayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
+            Targets: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
+            ScriptType: Inline
             InlineScript: "Start-WebAppPool $(applicationPoolName)" 

@@ -3,7 +3,7 @@ param ($docSysConfigurationFilePath, $reformatJsonOutput = $true)
 $availableModules = Get-Module PSMustache -ListAvailable
 if ($null -eq $availableModules)
 {
-    Install-Module -Name PSMustache -Scope CurrentUser -Force
+    Import-Module $PSScriptRoot\PSMustache.psm1
 }
 
 $availableModules = Get-Module newtonsoft.json -ListAvailable
@@ -96,7 +96,7 @@ function Format-ConfigurationFiles {
 
     Get-ChildItem -Recurse -Include *.mustache -Name | ForEach-Object {
         $configuredFile = $_.Replace('.mustache','') 
-        $template = Get-Content $_ | Out-String; ConvertFrom-MustacheTemplate -Template $template -Values $values | Tee-Object -Variable output
+        $template = Get-Content $_ | Out-String; $PSScriptRoot/myScript1.ps1 ConvertFrom-MustacheTemplate -Template $template -Values $values | Tee-Object -Variable output
         if($configuredFile.EndsWith(".json") -And $reformatJsonOutput)
         {
             Write-Output "Repairing malformed json"
@@ -127,6 +127,8 @@ function Add-SecretsToDottedPath {
             # Final element
             $current[$key] = $Value
         } else {
+
+            $test = $current[$key]
             if (-not $current.ContainsKey($key)) {
                 $current[$key] = @{}
             }
