@@ -123,7 +123,7 @@ jobs:
               ScriptType: Inline
               InlineScript: |
                 Copy-Item -Path "${{ parameters.iisSiteFolderPrefix }}Config\$(componentName)\*" -Destination "${{ parameters.iisSiteFolderPrefix }}$(componentName)" -Recurse -Force
-        - ${{ eq(parameters.clearTemporaryFilesPerComponent, true) }}:
+        - ${{ if eq(parameters.clearTemporaryFilesPerComponent, true) }}:
           - template: Execute-Powershell-Remote.yml
             parameters:
               DisplayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
