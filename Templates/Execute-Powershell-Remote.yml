@@ -15,6 +15,7 @@ parameters:
   - FilePath    
 - name: InlineScript
   type: object
+  default: ''
 - name: ScriptPath
   type: string
   default: ''
