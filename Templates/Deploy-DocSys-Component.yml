@@ -103,7 +103,7 @@ jobs:
           parameters:
             DisplayName: "Deploy $(componentName) application files to ${{ parameters.environment }} server"
             Source: "$(Pipeline.Workspace)/deployPackage/${{ parameters.component }}"
-            Targets: ${{ parameters.serverNames }}
+            ServersList: ${{ parameters.serverNames }}
             AccountType: ${{ parameters.AccountType }}
             Destination: "${{ parameters.iisSiteFolderPrefix }}$(componentName)"
             CleanTargetBeforeCopy: true
