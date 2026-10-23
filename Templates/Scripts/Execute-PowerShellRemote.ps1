@@ -2,58 +2,52 @@ param ($serversList, $accountType, $username, $password, $scriptType, $inlineScr
 
 $ErrorActionPreference = "Stop"
 
-try {
-
-    if ($AccountType -eq 'UserAccount') {
-        if (-not $username -or -not $password) {
-            throw "Username and/or password missing."
-        }
-        Write-Debug "Creating credential object for $username"
-
-        Write-Host "Creating credential object for user '$username'."
-        $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-        $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
+if ($AccountType -eq 'UserAccount') {
+    if (-not $username -or -not $password) {
+        throw "Username and/or password missing."
     }
+    Write-Debug "Creating credential object for $username"
 
-    $serverList = @()
-    $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+    Write-Host "Creating credential object for user '$username'."
+    $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+    $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
+}
 
-    foreach($server in $serverList) {
-        Write-Host "Login to server $server"
+$serverList = @()
+$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
-        if ($credential) {
-            Write-Host "Creating session to '$server' for '$username'."
-            $session = New-PSSession -ComputerName $server -Credential $credential
-        }
-        else {
-            Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
-            $session = New-PSSession -ComputerName $Server
-        }
-        try {
-            if($scriptType -eq 'Inline')
-            {
-                Invoke-Command –Session $session –ScriptBlock $inlineScript -ArgumentList $scriptArguments
-            }
-            if($scriptType -eq 'FilePath')
-            {
-                Invoke-Command –Session $session -FilePath $scriptPath  -ArgumentList $scriptArguments
-            }
-        }
-        finally {
-            if ($session) {
-                Remove-PSSession $session
-            }
-        }
-    }
+foreach($server in $serverList) {
+    Write-Host "Login to server $server"
 
-    if ($error[0]) {
-        Write-Warning "Finished deploying with errors"
-        $error[0]
+    if ($credential) {
+        Write-Host "Creating session to '$server' for '$username'."
+        $session = New-PSSession -ComputerName $server -Credential $credential
     }
     else {
-        Write-Host "Finished deploying"
-    }    
+        Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
+        $session = New-PSSession -ComputerName $Server
+    }
+    try {
+        if($scriptType -eq 'Inline')
+        {
+            Invoke-Command –Session $session –ScriptBlock $inlineScript -ArgumentList $scriptArguments
+        }
+        if($scriptType -eq 'FilePath')
+        {
+            Invoke-Command –Session $session -FilePath $scriptPath  -ArgumentList $scriptArguments
+        }
     }
     finally {
-    Trace-VstsLeavingInvocation $MyInvocation
+        if ($session) {
+            Remove-PSSession $session
+        }
+    }
+}
+
+if ($error[0]) {
+    Write-Warning "Finished deploying with errors"
+    $error[0]
+}
+else {
+    Write-Host "Finished deploying"
 }
