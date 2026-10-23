@@ -32,7 +32,7 @@ foreach($server in $serverList) {
         {
             Write-Host $inlineScript
 
-            Invoke-Command –Session $session –ScriptBlock ${$inlineScript} -ArgumentList $scriptArguments
+            Invoke-Command –Session $session –ScriptBlock ${ if((Get-WebAppPoolState Belastingdienst-FDDG).Value -eq 'Started') `{ Stop-WebAppPool Belastingdienst-FDDG `} } -ArgumentList $scriptArguments
         }
         if($scriptType -eq 'FilePath')
         {
