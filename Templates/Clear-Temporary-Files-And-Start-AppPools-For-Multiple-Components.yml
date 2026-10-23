@@ -56,7 +56,7 @@ jobs:
             Servers: ${{ parameters.serverNames }}
             AccountType: ${{ parameters.AccountType }}
             ScriptType: FilePath
-            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/FDDG/ClearTemporaryPluginFiles.ps1
+            ScriptPath: $(Pipeline.Workspace)\scripts\ClearTemporaryPluginFiles.ps1
         - ${{ each applicationPool in parameters.applicationPools }}:            
           - template: Execute-Powershell-Remote.yml
             parameters:
