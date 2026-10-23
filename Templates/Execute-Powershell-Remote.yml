@@ -1,7 +1,7 @@
 parameters:
 - name: DisplayName
   type: string
-- name: ServersList
+- name: Servers
   type: string
 - name: AccountType
   type: string
@@ -31,4 +31,4 @@ steps:
     targetType: filePath
     filePath: $(Pipeline.Workspace)\Scripts\Execute-PowerShellRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
-    arguments: '-serversList ${{ parameters.ServersList }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -scriptType ${{ parameters.ScriptType }} -inlineScript "${{ parameters.InlineScript }}" -scriptPath "${{ parameters.ScriptPath }}" -scriptArguments "${{ parameters.ScriptArguments }}"'
+    arguments: '-servers ${{ parameters.Servers }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -scriptType ${{ parameters.ScriptType }} -inlineScript "${{ parameters.InlineScript }}" -scriptPath "${{ parameters.ScriptPath }}" -scriptArguments "${{ parameters.ScriptArguments }}"'

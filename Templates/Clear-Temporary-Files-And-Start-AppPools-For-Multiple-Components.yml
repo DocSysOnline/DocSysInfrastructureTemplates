@@ -45,7 +45,7 @@ jobs:
         - template: Execute-Powershell-Remote.yml
           parameters:
             DisplayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-            ServersList: ${{ parameters.serverNames }}
+            Servers: ${{ parameters.serverNames }}
             AccountType: ${{ parameters.AccountType }}
             ScriptType: FilePath
             ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/FDDG/ClearTemporaryASPNetFilesForIISSite.ps1
@@ -53,7 +53,7 @@ jobs:
         - template: Execute-Powershell-Remote.yml
           parameters:
             DisplayName: "Clear temporary plugin files on ${{ parameters.environment }} server"
-            ServersList: ${{ parameters.serverNames }}
+            Servers: ${{ parameters.serverNames }}
             AccountType: ${{ parameters.AccountType }}
             ScriptType: FilePath
             ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/FDDG/ClearTemporaryPluginFiles.ps1
@@ -61,7 +61,7 @@ jobs:
           - template: Execute-Powershell-Remote.yml
             parameters:
               DisplayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"
-              ServersList: ${{ parameters.serverNames }}
+              Servers: ${{ parameters.serverNames }}
               AccountType: ${{ parameters.AccountType }}
               ScriptType: Inline
               InlineScript: "Start-WebAppPool ${{ applicationPool }}"

@@ -3,7 +3,7 @@ parameters:
   type: string
 - name: Source
   type: string
-- name: ServersList
+- name: Servers
   type: string
 - name: AccountType
   type: string
@@ -24,4 +24,4 @@ steps:
     targetType: filePath
     filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
     workingDirectory: "$(Pipeline.Workspace)"
-    arguments: '-serverslist ${{ parameters.ServersList }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -source ${{ parameters.Source }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'
+    arguments: '-servers ${{ parameters.Servers }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -source ${{ parameters.Source }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'

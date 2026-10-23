@@ -1,4 +1,4 @@
-param ($serversList, $accountType, $username, $password, $scriptType, $inlineScript, $scriptPath, $scriptArguments)
+param ($servers, $accountType, $username, $password, $scriptType, $inlineScript, $scriptPath, $scriptArguments)
 
 $ErrorActionPreference = "Stop"
 
@@ -14,7 +14,7 @@ if ($AccountType -eq 'UserAccount') {
 }
 
 $serverList = @()
-$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+$servers.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
 foreach($server in $serverList) {
     Write-Host "Login to server $server"

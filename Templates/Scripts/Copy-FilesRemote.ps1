@@ -1,4 +1,4 @@
-param ($source, $serversList, $accountType, $username, $password, $destination, $cleanTargetBeforeCopy)
+param ($servers, $accountType, $username, $password, $source, $destination, $cleanTargetBeforeCopy)
 
 $ErrorActionPreference = "Stop"
 
@@ -27,7 +27,7 @@ if (-not $destination.EndsWith('\')) {
 Write-Debug "Destination is $destination"
 
 $serverList = @()
-$serversList.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+$servers.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
 foreach($server in $serverList) {
     Write-Host "Starting copy to server $server"
