@@ -70,7 +70,7 @@ jobs:
           parameters:
             DisplayName: "Deploy scripts to ${{ parameters.environment }} server"
             Source: "$(Pipeline.Workspace)/scripts"
-            Targets: ${{ parameters.serverNames }}
+            ServersList: ${{ parameters.serverNames }}
             AccountType: ${{ parameters.AccountType }}
             Destination: "${{ parameters.iisSiteFolderPrefix }}Scripts/${{ parameters.component }}${{ parameters.componentSuffix }}"
             CleanTargetBeforeCopy: true
@@ -94,7 +94,7 @@ jobs:
         - template: Execute-Powershell-Remote.yml
           parameters:
             DisplayName: "Stop IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
-            Targets: ${{ parameters.serverNames }}
+            ServersList: ${{ parameters.serverNames }}
             AccountType: ${{ parameters.AccountType }}
             ScriptType: Inline
             InlineScript: |
@@ -118,7 +118,7 @@ jobs:
           - template: Execute-Powershell-Remote.yml
             parameters:
               DisplayName: "Copy config"
-              Targets: ${{ parameters.serverNames }}
+              ServersList: ${{ parameters.serverNames }}
               AccountType: ${{ parameters.AccountType }}
               ScriptType: Inline
               InlineScript: |
@@ -127,7 +127,7 @@ jobs:
           - template: Execute-Powershell-Remote.yml
             parameters:
               DisplayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-              Targets: ${{ parameters.serverNames }}
+              ServersList: ${{ parameters.serverNames }}
               AccountType: ${{ parameters.AccountType }}
               ScriptType: FilePath
               ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/${{ parameters.component }}${{ parameters.componentSuffix }}/ClearTemporaryASPNetFilesForIISSite.ps1
@@ -135,7 +135,7 @@ jobs:
           - template: Execute-Powershell-Remote.yml
             parameters:
               DisplayName: "Start IIS application pool $(applicationPoolName) on ${{ parameters.environment }} server"
-              Targets: ${{ parameters.serverNames }}
+              ServersList: ${{ parameters.serverNames }}
               AccountType: ${{ parameters.AccountType }}
               ScriptType: Inline
               InlineScript: |

@@ -1,4 +1,4 @@
-param ($targets, $accountType, $username, $password, $scriptType, $inlineScript, $scriptPath, $scriptArguments)
+param ($serversList, $accountType, $username, $password, $scriptType, $inlineScript, $scriptPath, $scriptArguments)
 
 $ErrorActionPreference = "Stop"
 
@@ -13,66 +13,53 @@ if ($AccountType -eq 'UserAccount') {
     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
 }
 
-# $files = Get-ChildItem -Path $source -Recurse
+$serverList = @()
+$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
-# $sourcedirectory = Get-Item -Path $source
-# $sourcepath = $sourcedirectory.FullName.TrimEnd('\')
+foreach($server in $serverList) {
+    # Write-Host "Starting copy to server $server"
 
-# Write-Debug "Source path is $sourcepath"
+    # if ($credential) {
+	# 	Write-Host "Creating session to '$server' for '$username'."
+    #     $session = New-PSSession -ComputerName $server -Credential $credential
+    # }
+    # else
+    # {
+	# 	Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
+	# 	$session = New-PSSession -ComputerName $Server
+    # }
 
-# if (-not $destination.EndsWith('\')) {
-#     $destination = $destination + '\'
-# }
+    # if ($cleanTargetBeforeCopy) {
+    #     Write-Debug "Removing folder $destination on target machine"
 
-# Write-Debug "Destination is $destination"
+    #     Invoke-Command -Session $session -ScriptBlock { 
+    #         param($p)
+    #         if (Test-Path $p) {
+    #             Remove-Item -Path $p -Recurse -Force
+    #         }
+    #     } -ArgumentList $destination
+    # }
 
-# $serverList = @()
-# $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+    # Write-Debug "Ensuring destination folder exists on target machine"
 
-# foreach($server in $serverList) {
-#     Write-Host "Starting copy to server $server"
+    # Invoke-Command -Session $session -ScriptBlock { 
+    #     param($p)
+    #     New-Item -Path $p -ItemType Directory -Force | Out-Null
+    # } -ArgumentList $destination
 
-#     if ($credential) {
-# 		Write-Host "Creating session to '$server' for '$username'."
-#         $session = New-PSSession -ComputerName $server -Credential $credential
-#     }
-#     else
-#     {
-# 		Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
-# 		$session = New-PSSession -ComputerName $Server
-#     }
+    # foreach ($file in $files) {
+    #     $filepath = Split-Path -Path $file
+    #     $filename = Split-Path -Path $file -Leaf
 
-#     if ($cleanTargetBeforeCopy) {
-#         Write-Debug "Removing folder $destination on target machine"
+    #     $relativepath = $filepath.Replace($sourcepath, "")
+    #     $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
 
-#         Invoke-Command -Session $session -ScriptBlock { 
-#             param($p)
-#             if (Test-Path $p) {
-#                 Remove-Item -Path $p -Recurse -Force
-#             }
-#         } -ArgumentList $destination
-#     }
+    #     # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
+    #     # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
+    #     Write-Host "  Copying $filename to $targetpath on target machine"
+    #     Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
+    # }
 
-#     Write-Debug "Ensuring destination folder exists on target machine"
+    # Write-Host "Finished copy to server $server"
 
-#     Invoke-Command -Session $session -ScriptBlock { 
-#         param($p)
-#         New-Item -Path $p -ItemType Directory -Force | Out-Null
-#     } -ArgumentList $destination
-
-#     foreach ($file in $files) {
-#         $filepath = Split-Path -Path $file
-#         $filename = Split-Path -Path $file -Leaf
-
-#         $relativepath = $filepath.Replace($sourcepath, "")
-#         $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
-
-#         # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-#         # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
-#         Write-Host "  Copying $filename to $targetpath on target machine"
-#         Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
-#     }
-
-#     Write-Host "Finished copy to server $server"
-
-# }
+}
