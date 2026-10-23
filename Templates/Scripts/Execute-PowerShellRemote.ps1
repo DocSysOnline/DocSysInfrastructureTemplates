@@ -2,64 +2,58 @@ param ($serversList, $accountType, $username, $password, $scriptType, $inlineScr
 
 $ErrorActionPreference = "Stop"
 
-if ($AccountType -eq 'UserAccount') {
-    if (-not $username -or -not $password) {
-        throw "Username and/or password missing."
-	}
-    Write-Debug "Creating credential object for $username"
+try {
 
-	Write-Host "Creating credential object for user '$username'."
-    $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-    $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
-}
+    if ($AccountType -eq 'UserAccount') {
+        if (-not $username -or -not $password) {
+            throw "Username and/or password missing."
+        }
+        Write-Debug "Creating credential object for $username"
 
-$serverList = @()
-$targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
+        Write-Host "Creating credential object for user '$username'."
+        $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+        $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username, $securepassword)
+    }
 
-foreach($server in $serverList) {
-    # Write-Host "Starting copy to server $server"
+    $serverList = @()
+    $targets.split(',', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { if( ![string]::IsNullOrWhiteSpace($_) -and ![string]::Equals('\n', $_)) { $serverList += $_ } }
 
-    # if ($credential) {
-	# 	Write-Host "Creating session to '$server' for '$username'."
-    #     $session = New-PSSession -ComputerName $server -Credential $credential
-    # }
-    # else
-    # {
-	# 	Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
-	# 	$session = New-PSSession -ComputerName $Server
-    # }
+    foreach($server in $serverList) {
+        Write-Host "Login to server $server"
 
-    # if ($cleanTargetBeforeCopy) {
-    #     Write-Debug "Removing folder $destination on target machine"
+        if ($credential) {
+            Write-Host "Creating session to '$server' for '$username'."
+            $session = New-PSSession -ComputerName $server -Credential $credential
+        }
+        else {
+            Write-Host "Creating session to '$server' for '$($env:USERDOMAIN)\$($env:USERNAME)'."
+            $session = New-PSSession -ComputerName $Server
+        }
+        try {
+            if($scriptType -eq 'Inline')
+            {
+                Invoke-Command –Session $session –ScriptBlock $inlineScript -ArgumentList $scriptArguments
+            }
+            if($scriptType -eq 'FilePath')
+            {
+                Invoke-Command –Session $session -FilePath $scriptPath  -ArgumentList $scriptArguments
+            }
+        }
+        finally {
+            if ($session) {
+                Remove-PSSession $session
+            }
+        }
+    }
 
-    #     Invoke-Command -Session $session -ScriptBlock { 
-    #         param($p)
-    #         if (Test-Path $p) {
-    #             Remove-Item -Path $p -Recurse -Force
-    #         }
-    #     } -ArgumentList $destination
-    # }
-
-    # Write-Debug "Ensuring destination folder exists on target machine"
-
-    # Invoke-Command -Session $session -ScriptBlock { 
-    #     param($p)
-    #     New-Item -Path $p -ItemType Directory -Force | Out-Null
-    # } -ArgumentList $destination
-
-    # foreach ($file in $files) {
-    #     $filepath = Split-Path -Path $file
-    #     $filename = Split-Path -Path $file -Leaf
-
-    #     $relativepath = $filepath.Replace($sourcepath, "")
-    #     $targetpath = ($destination + $relativepath).Replace('/', '\').Replace('\\', '\')
-
-    #     # Set MaxEnvelopeSizeKb to correct value (Windows Server 2019 issue)
-    #     # Invoke-Command -ScriptBlock ${function:Set-MaxEnvelopeSizeKb} -Session $session
-    #     Write-Host "  Copying $filename to $targetpath on target machine"
-    #     Copy-Item -Path $file -Destination $targetpath -ToSession $session -Force
-    # }
-
-    # Write-Host "Finished copy to server $server"
-
+    if ($error[0]) {
+        Write-Warning "Finished deploying with errors"
+        $error[0]
+    }
+    else {
+        Write-Host "Finished deploying"
+    }    
+    }
+    finally {
+    Trace-VstsLeavingInvocation $MyInvocation
 }
