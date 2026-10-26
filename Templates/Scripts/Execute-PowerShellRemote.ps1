@@ -30,10 +30,13 @@ foreach($server in $serverList) {
     try {
         if($scriptType -eq 'Inline')
         {
-            $singleLineInlineScript = $inlineScript.Replace("`r`n",';').Replace("`n`r",';').Replace("`n",';').Replace("`r",';')
-            Write-Host "Execute: '$singleLineInlineScript'"
+            $singleLineCommand = $inlineScript.Replace("`r`n",';').Replace("`n`r",';').Replace("`n",';').Replace("`r",';')
+            Write-Host "Execute: '$singleLineCommand'"
 
-            Invoke-Command –Session $session –ScriptBlock { $singleLineInlineScript } -ArgumentList $scriptArguments
+            Invoke-Command -Session $session -ScriptBlock { 
+                param($c)
+                Invoke-Expression -Command $c
+            } -ArgumentList $singleLineCommand
         }
         if($scriptType -eq 'FilePath')
         {
