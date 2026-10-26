@@ -39,6 +39,10 @@ foreach($server in $serverList) {
             Invoke-Command –Session $session -FilePath $scriptPath  -ArgumentList $scriptArguments
         }
     }
+    catch {
+        Write-Host "An error occurred:"
+        Write-Host $_
+    }
     finally {
         if ($session) {
             Remove-PSSession $session
