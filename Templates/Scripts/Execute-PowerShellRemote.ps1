@@ -30,9 +30,10 @@ foreach($server in $serverList) {
     try {
         if($scriptType -eq 'Inline')
         {
-            Write-Host "Execute: '$inlineScript'"
+            $singleLineInlineScript = $inlineScript.Replace('\r\n',';').Replace('\n\r',';').Replace('\n',';').Replace('\r',';')
+            Write-Host "Execute: '$singleLineInlineScript'"
 
-            Invoke-Command –Session $session –ScriptBlock { $inlineScript } -ArgumentList $scriptArguments
+            Invoke-Command –Session $session –ScriptBlock { ($singleLineInlineScript)} -ArgumentList $scriptArguments
         }
         if($scriptType -eq 'FilePath')
         {
