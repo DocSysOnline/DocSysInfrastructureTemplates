@@ -30,6 +30,8 @@ foreach($server in $serverList) {
     try {
         if($scriptType -eq 'Inline')
         {
+            Write-Host "Execute: '$inlineScript'"
+
             Invoke-Command –Session $session –ScriptBlock { $inlineScript } -ArgumentList $scriptArguments
         }
         if($scriptType -eq 'FilePath')
