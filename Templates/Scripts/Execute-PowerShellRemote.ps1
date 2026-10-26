@@ -33,7 +33,7 @@ foreach($server in $serverList) {
             $singleLineInlineScript = $inlineScript.Replace("`r`n",';').Replace("`n`r",';').Replace("`n",';').Replace("`r",';')
             Write-Host "Execute: '$singleLineInlineScript'"
 
-            Invoke-Command –Session $session –ScriptBlock { ($singleLineInlineScript)} -ArgumentList $scriptArguments
+            Invoke-Command –Session $session –ScriptBlock { $singleLineInlineScript } -ArgumentList $scriptArguments
         }
         if($scriptType -eq 'FilePath')
         {
