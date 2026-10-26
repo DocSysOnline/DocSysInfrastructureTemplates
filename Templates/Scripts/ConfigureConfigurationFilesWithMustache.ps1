@@ -9,7 +9,7 @@ if ($null -eq $availableModules)
 $availableModules = Get-Module newtonsoft.json -ListAvailable
 if ($null -eq $availableModules)
 {
-    Install-Module -Name newtonsoft.json -Scope CurrentUser -Force
+    Import-Module $PSScriptRoot\newtonsoft.json.psm1
 }
 
 function Merge-JsonObject {
