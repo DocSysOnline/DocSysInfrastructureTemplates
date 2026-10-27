@@ -1,0 +1,45 @@
+parameters:
+- name: DisplayName
+  type: string
+- name: Servers
+  type: string
+- name: AccountType
+  type: string
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
+- name: ScriptType
+  type: string
+  values:  # Allowed values for 'ScriptType'
+  - Inline  
+  - FilePath    
+- name: InlineScript
+  type: object
+  default: ''
+- name: ScriptPath
+  type: string
+  default: ''
+- name: ScriptArguments
+  type: string
+  default: ''
+
+steps:
+- ${{ if eq(parameters.AccountType, 'ServiceAccount') }}:
+  - task: PowerShell@2
+    displayName: ${{ parameters.DisplayName }}
+    inputs:
+      pwsh: true
+      targetType: filePath
+      filePath: $(Pipeline.Workspace)\Scripts\Execute-PowerShellRemote.ps1
+      workingDirectory: "$(Pipeline.Workspace)"
+      arguments: '-servers ${{ parameters.Servers }} -accountType ${{ parameters.AccountType }} -scriptType ${{ parameters.ScriptType }} -inlineScript "${{ parameters.InlineScript }}" -scriptPath "${{ parameters.ScriptPath }}" -scriptArguments "${{ parameters.ScriptArguments }}"'
+
+- ${{ if eq(parameters.AccountType, 'UserAccount') }}:
+  - task: PowerShell@2
+    displayName: ${{ parameters.DisplayName }}
+    inputs:
+      pwsh: true
+      targetType: filePath
+      filePath: $(Pipeline.Workspace)\Scripts\Execute-PowerShellRemote.ps1
+      workingDirectory: "$(Pipeline.Workspace)"
+      arguments: '-servers ${{ parameters.Servers }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -scriptType ${{ parameters.ScriptType }} -inlineScript "${{ parameters.InlineScript }}" -scriptPath "${{ parameters.ScriptPath }}" -scriptArguments "${{ parameters.ScriptArguments }}"'

@@ -19,6 +19,12 @@ parameters:
 - name: dependsOnList
   type: object
   default: []
+- name: AccountType
+  type: string
+  default: UserAccount
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
 
 jobs:
 - deployment: ClearTemporaryFilesAndStartAppPoolsForMultipleComponents
@@ -36,28 +42,26 @@ jobs:
         - download: current
           displayName: 'Download scripts'
           artifact: scripts
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+        - template: Execute-Powershell-Remote.yml
+          parameters:
+            DisplayName: "Clear Temporary ASP.Net files cache on ${{ parameters.environment }} server"
+            Servers: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
             ScriptType: FilePath
-            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryASPNetFilesForIISSite.ps1
+            ScriptPath: $(Pipeline.Workspace)\scripts\ClearTemporaryASPNetFilesForIISSite.ps1
             ScriptArguments: '-iisSiteName ${{ parameters.iisSiteName }}'
-        - task: PowerShellOnTargetMachines@3
-          displayName: "Clear temporary plugin files on ${{ parameters.environment }} server"
-          inputs:
-            Machines: ${{ parameters.serverNames }}
-            UserName: $(DeployUserName)
-            UserPassword: $(DeployUserPassword)
+        - template: Execute-Powershell-Remote.yml
+          parameters:
+            DisplayName: "Clear temporary plugin files on ${{ parameters.environment }} server"
+            Servers: ${{ parameters.serverNames }}
+            AccountType: ${{ parameters.AccountType }}
             ScriptType: FilePath
-            ScriptPath: ${{ parameters.iisSiteFolderPrefix }}/Scripts/ClearTemporaryPluginFiles.ps1
+            ScriptPath: $(Pipeline.Workspace)\scripts\ClearTemporaryPluginFiles.ps1
         - ${{ each applicationPool in parameters.applicationPools }}:            
-          - task: PowerShellOnTargetMachines@3
-            displayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"
-            inputs:
-              Machines: ${{ parameters.serverNames }}
-              UserName: $(DeployUserName)
-              UserPassword: $(DeployUserPassword)
+          - template: Execute-Powershell-Remote.yml
+            parameters:
+              DisplayName: "Start IIS application pool ${{ applicationPool }} on ${{ parameters.environment }} server"
+              Servers: ${{ parameters.serverNames }}
+              AccountType: ${{ parameters.AccountType }}
+              ScriptType: Inline
               InlineScript: "Start-WebAppPool ${{ applicationPool }}"

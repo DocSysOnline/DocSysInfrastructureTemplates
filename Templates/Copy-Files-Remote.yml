@@ -1,0 +1,37 @@
+parameters:
+- name: DisplayName
+  type: string
+- name: Source
+  type: string
+- name: Servers
+  type: string
+- name: AccountType
+  type: string
+  values:  # Allowed values for 'accountType'
+  - ServiceAccount  
+  - UserAccount  
+- name: Destination
+  type: string
+- name: CleanTargetBeforeCopy
+  type: boolean
+  default: false
+
+steps:
+- ${{ if eq(parameters.AccountType, 'ServiceAccount') }}:
+  - task: PowerShell@2
+    displayName: ${{ parameters.DisplayName }}
+    inputs:
+      pwsh: true
+      targetType: filePath
+      filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
+      workingDirectory: "$(Pipeline.Workspace)"
+      arguments: '-servers ${{ parameters.Servers }} -accountType ${{ parameters.AccountType }} -source ${{ parameters.Source }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'
+- ${{ if eq(parameters.AccountType, 'UserAccount') }}:
+  - task: PowerShell@2
+    displayName: ${{ parameters.DisplayName }}
+    inputs:
+      pwsh: true
+      targetType: filePath
+      filePath: $(Pipeline.Workspace)\Scripts\Copy-FilesRemote.ps1
+      workingDirectory: "$(Pipeline.Workspace)"
+      arguments: '-servers ${{ parameters.Servers }} -accountType ${{ parameters.AccountType }} -username $(DeployUserName) -password $(DeployUserPassword) -source ${{ parameters.Source }} -destination ${{ parameters.Destination }} -cleanTargetBeforeCopy ${{ parameters.CleanTargetBeforeCopy }}'
